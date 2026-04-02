@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom C4 — Content Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0b0f14; color: #e8e8e8; min-height: 100vh; }
+
+  /* NAV */
+  .topnav { background: #0f1419; border-bottom: 1px solid #1a2535; padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+  .nav-logo { font-size: 1rem; font-weight: 800; color: #52b788; letter-spacing: 3px; margin-right: auto; text-decoration: none; }
+  .nav-link { font-size: 0.72rem; color: #555; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; padding: 0.3rem 0.6rem; border-radius: 5px; }
+  .nav-link:hover { color: #74c69d; }
+  .nav-link.active { color: #52b788; background: #1a2e22; }
+
+  /* HEADER */
+  .header { background: #111620; border-bottom: 2px solid #2d6a4f; padding: 0.85rem 1.8rem; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 1.35rem; font-weight: 800; color: #52b788; letter-spacing: 3px; }
+  .logo span { color: #b7e4c7; font-size: 0.6rem; display: block; letter-spacing: 2px; font-weight: 500; margin-top: -1px; }
+  .header-right { display: flex; align-items: center; gap: 0.75rem; }
+  .header-badge { background: #1a2e22; border: 1px solid #2d6a4f; border-radius: 20px; padding: 4px 14px; font-size: 0.65rem; color: #52b788; letter-spacing: 1px; }
+  .api-status { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; color: #555; }
+  .api-dot { width: 6px; height: 6px; border-radius: 50%; background: #555; }
+  .api-dot.live { background: #52b788; box-shadow: 0 0 5px #52b788; }
+
+  /* LAYOUT */
+  .app { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 105px); }
+
+  /* SIDEBAR */
+  .sidebar { background: #0d1118; border-right: 1px solid #1a2030; display: flex; flex-direction: column; }
+  .sidebar-top { padding: 1.1rem; flex: 1; overflow-y: auto; }
+  .sidebar-label { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: #52b788; margin-bottom: 0.7rem; font-weight: 700; }
+  .client-card { background: #161d2a; border: 1px solid #1e2838; border-radius: 9px; padding: 0.85rem 1rem; margin-bottom: 0.55rem; cursor: pointer; transition: all 0.18s; position: relative; overflow: hidden; }
+  .client-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: background 0.18s; }
+  .client-card:hover::before, .client-card.active::before { background: #52b788; }
+  .client-card:hover { border-color: #2d6a4f; }
+  .client-card.active { border-color: #2d6a4f; background: #132010; }
+  .client-name { font-weight: 700; font-size: 0.88rem; color: #e8e8e8; }
+  .client-sub { font-size: 0.68rem; color: #52b788; margin-top: 2px; }
+  .client-community { font-size: 0.65rem; color: #444; margin-top: 1px; }
+  .excl-badge { display: inline-block; background: #1a0e2e; border: 1px solid #4a1a6a; color: #c084fc; font-size: 0.58rem; padding: 1px 6px; border-radius: 8px; margin-top: 4px; }
+  .add-btn { margin: 0 1.1rem 1.1rem; background: transparent; border: 1px dashed #2d6a4f; border-radius: 8px; padding: 0.65rem; color: #52b788; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; width: calc(100% - 2.2rem); font-family: inherit; }
+  .add-btn:hover { background: #132010; }
+
+  /* MAIN */
+  .main { overflow-y: auto; }
+  .view-content { padding: 1.2rem 1.5rem; }
+
+  /* API KEY SCREEN */
+  .api-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; padding: 2rem; text-align: center; }
+  .api-screen h2 { font-size: 1.3rem; font-weight: 800; color: #e8e8e8; margin-bottom: 0.5rem; }
+  .api-screen p { font-size: 0.8rem; color: #666; max-width: 380px; line-height: 1.7; margin-bottom: 1.5rem; }
+  .api-input-wrap { display: flex; gap: 0.5rem; width: 100%; max-width: 480px; }
+  .api-input { flex: 1; background: #161d2a; border: 1px solid #2d6a4f; border-radius: 8px; padding: 0.7rem 1rem; color: #e8e8e8; font-size: 0.82rem; font-family: monospace; outline: none; }
+  .api-save-btn { background: linear-gradient(135deg, #2d6a4f, #52b788); border: none; border-radius: 8px; padding: 0.7rem 1.5rem; color: white; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .api-note { font-size: 0.68rem; color: #333; margin-top: 0.75rem; max-width: 380px; }
+
+  /* FORM */
+  .form-section { background: #111620; border: 1px solid #1e2838; border-radius: 12px; padding: 1.2rem; margin-bottom: 0.85rem; }
+  .form-section-title { font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: #52b788; margin-bottom: 0.9rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .form-section-title::after { content: ''; flex: 1; height: 1px; background: #1a2030; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  .form-full { grid-column: 1 / -1; }
+  .fg label { display: block; font-size: 0.62rem; letter-spacing: 1px; text-transform: uppercase; color: #74c69d; margin-bottom: 0.3rem; font-weight: 600; }
+  .fg input, .fg textarea, .fg select { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.5rem 0.75rem; color: #e8e8e8; font-size: 0.8rem; font-family: inherit; transition: border-color 0.2s; }
+  .fg input:focus, .fg textarea:focus, .fg select:focus { outline: none; border-color: #52b788; }
+  .fg textarea { resize: vertical; min-height: 60px; }
+  .fg select option { background: #161d2a; }
+  .tone-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.45rem; margin-top: 0.35rem; }
+  .tone-chip { padding: 0.4rem 0.5rem; border: 1px solid #1e2838; border-radius: 7px; font-size: 0.68rem; cursor: pointer; text-align: center; color: #555; transition: all 0.15s; background: #161d2a; font-family: inherit; }
+  .tone-chip.selected { background: #132010; border-color: #52b788; color: #74c69d; font-weight: 600; }
+  .tone-chip:hover:not(.selected) { border-color: #2d6a4f; color: #74c69d; }
+  .gen-btn { background: linear-gradient(135deg, #2d6a4f, #52b788); border: none; border-radius: 8px; padding: 0.75rem 2rem; color: white; font-weight: 700; font-size: 0.85rem; cursor: pointer; letter-spacing: 0.5px; transition: all 0.2s; margin-top: 0.5rem; font-family: inherit; }
+  .gen-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(82,183,136,0.3); }
+
+  /* MONTHLY REFRESH */
+  .refresh-panel { background: #0e1620; border: 1px solid #1a3040; border-radius: 12px; padding: 1.1rem 1.3rem; margin-bottom: 1.2rem; }
+  .refresh-title { font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: #60a5fa; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .refresh-title::after { content: ''; flex: 1; height: 1px; background: #1a2535; }
+  .refresh-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.65rem; }
+  .refresh-field label { display: block; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; color: #60a5fa; margin-bottom: 0.3rem; }
+  .refresh-field textarea { width: 100%; background: #111e2a; border: 1px solid #1a3040; border-radius: 7px; padding: 0.5rem 0.7rem; color: #d0d8e8; font-size: 0.75rem; font-family: inherit; resize: vertical; min-height: 60px; outline: none; transition: border-color 0.2s; }
+  .refresh-field textarea:focus { border-color: #60a5fa; }
+  .refresh-note { font-size: 0.65rem; color: #2a4060; margin-top: 0.6rem; font-style: italic; }
+
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 1.1rem; }
+  .stat-card { background: #111620; border: 1px solid #1e2838; border-radius: 9px; padding: 0.8rem 0.9rem; }
+  .stat-val { font-size: 1.3rem; font-weight: 800; color: #52b788; }
+  .stat-label { font-size: 0.6rem; color: #444; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  /* EXCLUSIVITY */
+  .excl-banner { background: #100820; border: 1px solid #4a1a6a; border-radius: 9px; padding: 0.7rem 1rem; margin-bottom: 1.1rem; display: flex; align-items: center; gap: 0.65rem; }
+  .excl-banner-text { font-size: 0.75rem; color: #c084fc; line-height: 1.5; }
+  .excl-banner-text strong { color: #d4a0f0; }
+
+  /* SECTION DIVIDER */
+  .section-divider { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #52b788; margin: 1.1rem 0 0.7rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .section-divider::after { content: ''; flex: 1; height: 1px; background: #1a2030; }
+
+  /* CALENDAR */
+  .cal-header { display: grid; grid-template-columns: 44px 105px 135px 1fr 130px; background: #1a3828; border-radius: 8px 8px 0 0; overflow: hidden; }
+  .cal-hcell { padding: 0.5rem 0.7rem; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: #74c69d; font-weight: 700; }
+  .cal-body { border: 1px solid #1a2535; border-top: none; border-radius: 0 0 8px 8px; overflow: hidden; }
+  .cal-row { display: grid; grid-template-columns: 44px 105px 135px 1fr 130px; border-bottom: 1px solid #111820; transition: background 0.12s; cursor: pointer; }
+  .cal-row:last-child { border-bottom: none; }
+  .cal-row:hover { background: #111e2a; }
+  .cal-row.selected-row { background: #0e1e14; }
+  .cal-cell { padding: 0.55rem 0.7rem; font-size: 0.77rem; border-right: 1px solid #111820; display: flex; align-items: center; }
+  .cal-cell:last-child { border-right: none; }
+  .day-cell { justify-content: center; font-weight: 800; color: #52b788; font-size: 0.85rem; }
+  .week-divider { grid-column: 1/-1; background: #0f1820; padding: 0.38rem 0.7rem; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #f4a261; font-weight: 700; cursor: default; }
+  .week-divider:hover { background: #0f1820 !important; }
+
+  /* BADGES */
+  .badge { padding: 2px 8px; border-radius: 10px; font-size: 0.63rem; font-weight: 700; white-space: nowrap; }
+  .b-ig { background: #200e30; color: #c084fc; border: 1px solid #4a1a6a; }
+  .b-fb { background: #0e102a; color: #60a5fa; border: 1px solid #1a2060; }
+  .b-market { background: #0e2018; color: #74c69d; border: 1px solid #1a4028; }
+  .b-edu { background: #1e1a0a; color: #ffd166; border: 1px solid #4a400a; }
+  .b-engage { background: #1e100a; color: #f4a261; border: 1px solid #4a200a; }
+  .b-social { background: #0e0e28; color: #90b8f8; border: 1px solid #1a1a58; }
+  .b-lead { background: #1e0e1e; color: #d4a0f0; border: 1px solid #4a0e4a; }
+  .b-trust { background: #0e1e1e; color: #74d4d4; border: 1px solid #0e4a4a; }
+
+  .hook-cell { color: #c8c8c8; font-size: 0.75rem; line-height: 1.4; flex: 1; }
+  .view-btn { background: transparent; border: 1px solid #1e2838; border-radius: 6px; padding: 3px 9px; color: #52b788; font-size: 0.65rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit; }
+  .view-btn:hover { background: #132010; border-color: #52b788; }
+  .gen-caption-btn { background: linear-gradient(135deg, #1a3828, #2d6a4f); border: 1px solid #2d6a4f; border-radius: 6px; padding: 3px 10px; color: #74c69d; font-size: 0.65rem; cursor: pointer; transition: all 0.15s; white-space: nowrap; font-family: inherit; }
+  .gen-caption-btn:hover { background: linear-gradient(135deg, #2d6a4f, #52b788); color: white; }
+  .gen-caption-btn:disabled { opacity: 0.5; cursor: default; }
+
+  /* CAPTION PANEL */
+  .caption-panel { background: #0e1620; border: 1px solid #2d6a4f; border-radius: 12px; padding: 1.2rem; margin-top: 1rem; }
+  .cp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.7rem; }
+  .cp-title { font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase; color: #52b788; font-weight: 700; }
+  .cp-hook { font-size: 0.75rem; color: #555; font-style: italic; margin-bottom: 0.7rem; }
+  .cp-body { background: #111e2a; border: 1px solid #1e2838; border-radius: 8px; padding: 1rem; font-size: 0.8rem; line-height: 1.8; color: #d8d8d8; white-space: pre-wrap; min-height: 80px; }
+  .cp-loading { display: flex; align-items: center; gap: 0.6rem; color: #52b788; font-size: 0.78rem; padding: 1.5rem; }
+  .spinner { width: 16px; height: 16px; border: 2px solid #1a3828; border-top-color: #52b788; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .cp-meta { display: flex; align-items: center; gap: 0.65rem; margin-top: 0.7rem; flex-wrap: wrap; }
+  .copy-btn { background: transparent; border: 1px solid #2d6a4f; border-radius: 6px; padding: 5px 14px; color: #52b788; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .copy-btn:hover { background: #132010; }
+  .copy-btn.done { background: #2d6a4f; color: #b7e4c7; }
+  .regen-btn { background: transparent; border: 1px solid #1e2838; border-radius: 6px; padding: 5px 14px; color: #666; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .regen-btn:hover { border-color: #2d6a4f; color: #52b788; }
+  .canva-note { font-size: 0.67rem; color: #333; }
+  .cp-tip { background: #0e1e12; border-left: 3px solid #52b788; padding: 0.45rem 0.7rem; border-radius: 0 6px 6px 0; font-size: 0.7rem; color: #74c69d; margin-top: 0.7rem; }
+
+  /* TONE DISPLAY */
+  .tone-display { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 4px; }
+  .tone-tag { background: #111e2a; border: 1px solid #2d6a4f; border-radius: 10px; padding: 1px 7px; font-size: 0.62rem; color: #74c69d; }
+
+  /* EMPTY STATE */
+  .no-client { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 70vh; gap: 0.9rem; text-align: center; }
+  .no-client p { font-size: 0.8rem; max-width: 260px; line-height: 1.65; color: #444; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="nav-logo" href="index.html">CURBLOOM</a>
+  <a class="nav-link active" href="c4.html">C4</a>
+  <a class="nav-link" href="reporting.html">Reporting</a>
+  <a class="nav-link" href="post-designer.html">Post Designer</a>
+</nav>
+
+<div class="header">
+  <div>
+    <div class="logo">C4 <span>CONTENT COMMAND CENTER</span></div>
+  </div>
+  <div class="header-right">
+    <div class="api-status"><div class="api-dot" id="apiDot"></div><span id="apiStatusTxt">No API Key</span></div>
+    <div class="header-badge">Exclusive Territory Model</div>
+  </div>
+</div>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-label">Your Clients</div>
+      <div id="clientList"></div>
+    </div>
+    <button class="add-btn" onclick="showForm()">+ Add New Client</button>
+  </div>
+  <div class="main" id="mainArea">
+    <div class="no-client">
+      <div style="font-size:2.5rem;">🌱</div>
+      <p>Add your first client to generate their personalized 30-day content calendar.</p>
+      <button class="gen-btn" onclick="showForm()">Add First Client</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const clients = [];
+let activeIdx = null;
+let selectedDay = null;
+let apiKey = localStorage.getItem('curbloom_api_key') || '';
+const captionCache = {};
+
+const toneOptions = ["Warm & friendly","Professional","Direct & bold","Casual","Motivational","Educational","Humorous","Community-focused"];
+
+// ── UPDATE API INDICATOR ──
+function updateApiIndicator() {
+  const dot = document.getElementById('apiDot');
+  const txt = document.getElementById('apiStatusTxt');
+  if (apiKey) {
+    dot.classList.add('live');
+    txt.textContent = 'AI Active';
+    txt.style.color = '#52b788';
+  } else {
+    dot.classList.remove('live');
+    txt.textContent = 'No API Key';
+    txt.style.color = '#555';
+  }
+}
+updateApiIndicator();
+
+// ── CONTENT PLAN ──
+const contentPlan = [
+  { week: "Week 1 — Establish Authority", days: [
+    { day:1, platform:"Instagram", type:"Market Update", format:"Carousel (3 slides)" },
+    { day:2, platform:"Facebook", type:"Personality/Trust", format:"Photo + Caption" },
+    { day:3, platform:"Instagram", type:"Educational", format:"Reel (30 sec)" },
+    { day:4, platform:"Facebook", type:"Engagement", format:"Poll Post" },
+    { day:5, platform:"Instagram", type:"Lead Gen Hook", format:"Static + CTA" },
+    { day:6, platform:"Instagram", type:"Personality/Trust", format:"Reel" },
+    { day:7, platform:"Facebook", type:"Social Proof", format:"Client Win Post" },
+  ]},
+  { week: "Week 2 — Educate & Generate Leads", days: [
+    { day:8, platform:"Instagram", type:"Educational", format:"Carousel (5 slides)" },
+    { day:9, platform:"Facebook", type:"Market Update", format:"Graphic + Caption" },
+    { day:10, platform:"Instagram", type:"Engagement", format:"Reel (trending audio)" },
+    { day:11, platform:"Facebook", type:"Lead Gen Hook", format:"Video + CTA" },
+    { day:12, platform:"Instagram", type:"Social Proof", format:"Client Win Post" },
+    { day:13, platform:"Instagram", type:"Educational", format:"Carousel (4 slides)" },
+    { day:14, platform:"Facebook", type:"Personality/Trust", format:"Text Post" },
+  ]},
+  { week: "Week 3 — Build Trust & Deepen Engagement", days: [
+    { day:15, platform:"Instagram", type:"Market Update", format:"Reel or Static" },
+    { day:16, platform:"Facebook", type:"Engagement", format:"Question Post" },
+    { day:17, platform:"Instagram", type:"Educational", format:"Carousel" },
+    { day:18, platform:"Facebook", type:"Lead Gen Hook", format:"Image + CTA" },
+    { day:19, platform:"Instagram", type:"Personality/Trust", format:"Reel" },
+    { day:20, platform:"Facebook", type:"Social Proof", format:"Testimonial Graphic" },
+    { day:21, platform:"Instagram", type:"Engagement", format:"This or That" },
+  ]},
+  { week: "Week 4 — Convert & Close", days: [
+    { day:22, platform:"Instagram", type:"Educational", format:"Carousel" },
+    { day:23, platform:"Facebook", type:"Market Update", format:"Graphic Post" },
+    { day:24, platform:"Instagram", type:"Lead Gen Hook", format:"Reel or Static" },
+    { day:25, platform:"Facebook", type:"Educational", format:"Text + Image" },
+    { day:26, platform:"Instagram", type:"Personality/Trust", format:"Reel" },
+    { day:27, platform:"Facebook", type:"Engagement", format:"Trivia Post" },
+    { day:28, platform:"Instagram", type:"Social Proof", format:"Results Carousel" },
+    { day:29, platform:"Instagram", type:"Market Update", format:"Reel" },
+    { day:30, platform:"Facebook", type:"Lead Gen Hook", format:"Image + Strong CTA" },
+  ]},
+];
+
+function bClass(type) {
+  const m = {"Market Update":"b-market","Educational":"b-edu","Engagement":"b-engage","Social Proof":"b-social","Lead Gen Hook":"b-lead","Personality/Trust":"b-trust"};
+  return m[type] || "b-market";
+}
+
+// ── HOOK GENERATOR (offline fallback) ──
+function generateHook(client, day, type) {
+  const c = client.community || "this area";
+  const m = client.market || "the local area";
+  const tones = client.tones || [];
+  const isHumorous = tones.includes("Humorous");
+  const isDirect = tones.includes("Direct & bold");
+  const hooks = {
+    "Market Update": [
+      `What's happening in ${c} right now — the numbers you need to see`,
+      `${c} home values shifted this month — here's your update`,
+      `The ${m} market right now: what buyers and sellers need to know`,
+      `End-of-month snapshot: ${c} real estate by the numbers`,
+      `${m} market update — don't make a move without seeing this`,
+    ],
+    "Educational": [
+      `3 things nobody tells you about buying new construction in ${m}`,
+      `How to buy a home in ${m} — step by step, no jargon`,
+      `Renting vs. buying in ${m} — the honest breakdown`,
+      isDirect ? `Stop guessing. Here's what buying in ${m} actually costs.` : `What does buying in ${m} actually cost? Full breakdown.`,
+      `How much home can you actually afford in ${m} right now?`,
+    ],
+    "Engagement": [
+      `Quick question for ${m} families — what matters most in a new home?`,
+      isHumorous ? `${m} home buyers, be honest... which one are you? 😂` : `${m} neighborhood edition: this or that? 🏡`,
+      `What's your biggest fear about buying a home right now?`,
+      isHumorous ? `${m} real estate trivia — bet you get this wrong 😏` : `${m} real estate trivia — can you guess?`,
+    ],
+    "Social Proof": [
+      `Another family just found their forever home at ${c} — here's their story`,
+      client.recentWin ? `${client.recentWin} — here's how we made it happen` : `This month's win — here's what it looked like`,
+      `"We almost gave up. Then this happened." — a client story`,
+      `This month's results from ${c}`,
+    ],
+    "Lead Gen Hook": [
+      `Thinking about moving to ${m}? Read this first.`,
+      `What's your home actually worth in ${m} right now?`,
+      isDirect ? `Selling soon? Stop. Read this first.` : `Selling in the next 6 months? Do this now.`,
+      `First-time buyers: your free ${m} guide is here`,
+      isDirect ? `Ready to move in ${m}? Let's talk. No fluff.` : `Ready to buy or sell in ${m}? Let's talk this week.`,
+    ],
+    "Personality/Trust": [
+      client.personal ? `${client.personal.split(',')[0]} — and still finding homes for families` : `Behind the scenes: a week in the life`,
+      `Why I got into this — and why I'm still here`,
+      isHumorous ? `Things clients say vs. what they actually mean 😂` : `The honest side of this job nobody talks about`,
+      `What discipline in one area of life does for everything else`,
+    ],
+  };
+  const opts = hooks[type] || hooks["Market Update"];
+  return opts[(day - 1) % opts.length];
+}
+
+function generateTip(type) {
+  const tips = {
+    "Market Update": "Pull real stats from your MLS or Realtor.com. Replace any placeholders before scheduling.",
+    "Educational": "Open with the hook word-for-word on camera. Pair the Reel with a save-worthy carousel.",
+    "Engagement": "Reply to every comment in the first hour — this signals the algorithm to push the post further.",
+    "Social Proof": "Real closing photo = 3x the engagement. Get permission first, then tag the community.",
+    "Lead Gen Hook": "Set up a quick DM auto-response before posting. Speed of reply is everything.",
+    "Personality/Trust": "Raw and real beats polished every time for this content type. Phone video is perfect.",
+  };
+  return tips[type] || "Customize before posting.";
+}
+
+// ── AI CAPTION GENERATION ──
+async function generateCaptionAI(client, day, type, platform, format, hook) {
+  const cacheKey = `${client.name}-${day}`;
+  if (captionCache[cacheKey]) return captionCache[cacheKey];
+
+  if (!apiKey) {
+    return generateCaptionFallback(client, type, platform);
+  }
+
+  const monthly = client.monthlyInputs || {};
+  const monthlyContext = [
+    monthly.events ? `Local events/community news this month: ${monthly.events}` : '',
+    monthly.personal ? `Personal life updates: ${monthly.personal}` : '',
+    monthly.promote ? `Things to promote this month: ${monthly.promote}` : '',
+  ].filter(Boolean).join('\n');
+
+  const prompt = `You are a social media content writer for a real estate agent. Write one complete, ready-to-post social media caption. Do not include any preamble, explanation, or notes — just the caption itself.
+
+AGENT PROFILE:
+Name: ${client.name}
+Community/Neighborhood: ${client.community}
+Market/City: ${client.market}
+Agent Type: ${client.agentType || 'Realtor'}
+Tone/Voice: ${(client.tones || []).join(', ')}
+How they naturally talk: ${client.intro || ''}
+Phrases they use / words to avoid: ${client.phrases || ''}
+Personal details (family, hobbies, personality): ${client.personal || ''}
+Recent win or highlight: ${client.recentWin || ''}
+Ideal buyer they want to attract: ${client.idealBuyer || ''}
+Primary goal: ${client.goal || 'Generate buyer leads'}
+
+${monthlyContext ? `THIS MONTH'S CONTEXT:\n${monthlyContext}\n` : ''}
+
+POST DETAILS:
+Platform: ${platform}
+Content Type: ${type}
+Format: ${format}
+Day in 30-day calendar: ${day}
+Hook/Topic: "${hook}"
+
+INSTRUCTIONS:
+- Write in the agent's authentic voice based on their tone descriptors and how they talk
+- Reference their community (${client.community}) and market (${client.market}) naturally
+- Use personal details if appropriate for the content type
+- For ${platform}: ${platform === 'Instagram' ? 'include relevant hashtags at the end, keep it punchy and visual' : 'slightly longer, more conversational, no hashtags needed'}
+- End with a natural sign-off as ${client.name}
+- Make it feel human and specific — not generic real estate content
+- The caption should be complete and ready to post`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 600,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    if (!response.ok) throw new Error('API error');
+    const data = await response.json();
+    const caption = data.content?.[0]?.text || generateCaptionFallback(client, type, platform);
+    captionCache[cacheKey] = caption;
+    return caption;
+  } catch (e) {
+    return generateCaptionFallback(client, type, platform);
+  }
+}
+
+function generateCaptionFallback(client, type, platform) {
+  const c = client.community || "this area";
+  const m = client.market || "the local area";
+  const tones = client.tones || [];
+  const isDirect = tones.includes("Direct & bold");
+  const isWarm = tones.includes("Warm & friendly");
+  const tags = `#${c.replace(/[\s,]/g,'')} #${m.replace(/[\s,]/g,'')} #NewConstruction #RealEstate`;
+  const closing = isDirect ? `Let's talk. — ${client.name}` : isWarm ? `Always here if you have questions. 😊 — ${client.name}` : `— ${client.name}`;
+  const captions = {
+    "Market Update": `${isDirect ? "Here's the data. No fluff." : `Whether you're buying or selling, this is the update you need.`}\n\n${c} is ${isDirect ? "moving." : "on the move — here's what that means for you."} ${platform === "Instagram" ? "Swipe through for the full breakdown. Save this one." : "Here's what's shifted in the last 30 days and what it means for your plans."}\n\nQuestions? ${isDirect ? "DM me." : "My DMs are always open. 🏡"}\n\n${closing}\n\n${tags}`,
+    "Educational": `${isDirect ? "Nobody explains this clearly. Here it is." : "This is the stuff your agent should be telling you — but usually doesn't."}\n\n${platform === "Instagram" ? "Swipe through. Save this. Send it to someone who needs it." : "Read this before you make a move — share it with someone thinking about buying."}\n\nQuestions? Drop them below.\n\n${closing}\n\n${tags}`,
+    "Engagement": `Genuine question for my people in ${m}:\n\nDrop your answer in the comments. I read every one.\n\nAnd if you want to talk specifics about ${c} right now — DMs are open. 🏡\n\n${closing}`,
+    "Social Proof": `${isWarm ? "This one meant a lot. 🏡" : isDirect ? "Results." : "This is why I do what I do."}\n\n${client.recentWin || `Another family found their home at ${c}`}. Every closing is a reminder of why this work matters.\n\n${isDirect ? "Want in? DM me." : "If your family is ready to make a move, let's start the conversation. 🏡✅"}\n\n${closing}\n\n${tags} #JustClosed`,
+    "Lead Gen Hook": `${isDirect ? "DM me 'GUIDE' and I'll send you everything you need to know about buying in " + m + ". No pitch. Zero fluff." : "I put together a free guide covering everything you need to know about buying at " + c + " — timeline, costs, what to avoid, all of it.\n\nZero cost, zero pressure. DM me 'GUIDE' and I'll send it straight to you. 📩"}\n\n${closing}\n\n${tags}`,
+    "Personality/Trust": `${client.personal ? client.personal.split(',')[0].trim() + ". " : ""}${isDirect ? "This is the job. Wouldn't trade it." : "Grateful for every day I get to do work that actually matters for people."}\n\n${`If you want someone in your corner who's going to show up — let's talk. 💪`}\n\n${closing}\n\n${tags}`,
+  };
+  return captions[type] || captions["Market Update"];
+}
+
+// ── FORMS ──
+function showForm() {
+  document.getElementById('mainArea').innerHTML = `
+    <div class="view-content">
+      <div class="section-divider">New Client — Onboarding Info</div>
+      <div class="form-section">
+        <div class="form-section-title">Basic Info</div>
+        <div class="form-grid">
+          <div class="fg"><label>Full Name *</label><input id="f-name" placeholder="e.g. Blake Mason" /></div>
+          <div class="fg"><label>Community / Neighborhood *</label><input id="f-community" placeholder="e.g. The Woods" /></div>
+          <div class="fg"><label>City / Market *</label><input id="f-market" placeholder="e.g. Coweta, OK" /></div>
+          <div class="fg"><label>Agent Type</label>
+            <select id="f-agenttype">
+              <option>Lennar Sales Pro</option><option>Independent Realtor</option><option>Buyer's Agent</option><option>Listing Agent</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Brand Voice &amp; Tone</div>
+        <div class="fg form-full"><label>Select all tones that match this client</label>
+          <div class="tone-grid" id="toneGrid">${toneOptions.map(t=>`<button class="tone-chip" onclick="this.classList.toggle('selected')" data-tone="${t}">${t}</button>`).join('')}</div>
+        </div>
+        <div class="form-grid" style="margin-top:0.7rem;">
+          <div class="fg form-full"><label>How they naturally talk (from their questionnaire intro)</label><textarea id="f-intro" placeholder="e.g. 'Hey I'm Blake, I help families find their perfect home — I'm big on being straight with people and making the process easy.'"></textarea></div>
+          <div class="fg form-full"><label>Phrases they use / words they'd never say</label><textarea id="f-phrases" placeholder="e.g. Always says 'let's make it happen' — never wants to sound salesy or pushy"></textarea></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Personal Life &amp; Differentiators</div>
+        <div class="form-grid">
+          <div class="fg form-full"><label>Personal details (family, hobbies, routines — what makes their content unique)</label><textarea id="f-personal" placeholder="e.g. Has twin girls born 2025, hits the gym at 5am, very competitive, coaches youth sports..."></textarea></div>
+          <div class="fg form-full"><label>Recent win or current highlight</label><input id="f-win" placeholder="e.g. Top performer Q1, new phase opening at The Woods, 4 closings last month..." /></div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Their Goals</div>
+        <div class="form-grid">
+          <div class="fg"><label>Ideal buyer</label><input id="f-buyer" placeholder="e.g. Move-up buyers with young families" /></div>
+          <div class="fg"><label>Primary social media goal</label>
+            <select id="f-goal"><option>Generate buyer leads</option><option>Build name recognition</option><option>Stay top of mind with past clients</option><option>Attract referral partners</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">API Key (for AI caption generation)</div>
+        <div class="form-grid">
+          <div class="fg form-full"><label>Anthropic API Key (optional — captions work without it)</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input id="f-apikey" type="password" placeholder="sk-ant-..." value="${apiKey}" style="flex:1;" />
+              <button class="gen-btn" style="margin:0;padding:0.5rem 1rem;font-size:0.75rem;" onclick="saveApiKey()">Save Key</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="gen-btn" onclick="addClient()">⚡ Generate 30-Day Calendar</button>
+    </div>`;
+}
+
+function saveApiKey() {
+  const key = document.getElementById('f-apikey').value.trim();
+  if (key) { apiKey = key; localStorage.setItem('curbloom_api_key', key); updateApiIndicator(); alert('API key saved!'); }
+}
+
+function addClient() {
+  const name = document.getElementById('f-name').value.trim();
+  const community = document.getElementById('f-community').value.trim();
+  const market = document.getElementById('f-market').value.trim();
+  if (!name || !community || !market) { alert('Please fill in Name, Community, and Market.'); return; }
+  const k = document.getElementById('f-apikey').value.trim();
+  if (k) { apiKey = k; localStorage.setItem('curbloom_api_key', k); updateApiIndicator(); }
+  const tones = [...document.querySelectorAll('.tone-chip.selected')].map(el => el.dataset.tone);
+  clients.push({
+    name, community, market,
+    agentType: document.getElementById('f-agenttype').value,
+    tones,
+    intro: document.getElementById('f-intro').value.trim(),
+    phrases: document.getElementById('f-phrases').value.trim(),
+    personal: document.getElementById('f-personal').value.trim(),
+    recentWin: document.getElementById('f-win').value.trim(),
+    idealBuyer: document.getElementById('f-buyer').value.trim(),
+    goal: document.getElementById('f-goal').value,
+    monthlyInputs: {}
+  });
+  activeIdx = clients.length - 1;
+  selectedDay = null;
+  renderSidebar();
+  renderClient(activeIdx);
+}
+
+function renderSidebar() {
+  document.getElementById('clientList').innerHTML = clients.map((c, i) => `
+    <div class="client-card ${i===activeIdx?'active':''}" onclick="selectClient(${i})">
+      <div class="client-name">${c.name}</div>
+      <div class="client-sub">${c.agentType || 'Realtor'}</div>
+      <div class="client-community">${c.community} · ${c.market}</div>
+      <div class="excl-badge">Exclusive Territory</div>
+    </div>`).join('');
+}
+
+function selectClient(idx) {
+  activeIdx = idx;
+  selectedDay = null;
+  renderSidebar();
+  renderClient(idx);
+}
+
+function renderClient(idx) {
+  const c = clients[idx];
+  let calRows = '';
+  contentPlan.forEach(week => {
+    calRows += `<div class="cal-row"><div class="week-divider">📅 ${week.week}</div></div>`;
+    week.days.forEach(d => {
+      const hook = generateHook(c, d.day, d.type);
+      const safeHook = hook.replace(/'/g,"\\'").replace(/`/g,"'");
+      calRows += `
+        <div class="cal-row ${selectedDay===d.day?'selected-row':''}" onclick="showCaption(${idx},${d.day},'${d.type}','${d.platform}','${d.format.replace(/'/g,"\\'")}','${safeHook}')">
+          <div class="cal-cell day-cell">${d.day}</div>
+          <div class="cal-cell"><span class="badge ${d.platform==='Instagram'?'b-ig':'b-fb'}">${d.platform}</span></div>
+          <div class="cal-cell"><span class="badge ${bClass(d.type)}">${d.type}</span></div>
+          <div class="cal-cell"><div class="hook-cell">${hook}</div></div>
+          <div class="cal-cell"><button class="gen-caption-btn">✨ Generate</button></div>
+        </div>`;
+    });
+  });
+
+  const toneDisplay = c.tones?.length ? `<div class="tone-display">${c.tones.map(t=>`<span class="tone-tag">${t}</span>`).join('')}</div>` : '';
+
+  document.getElementById('mainArea').innerHTML = `
+    <div class="view-content">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;">
+        <div>
+          <div style="font-size:1.1rem;font-weight:800;">${c.name}</div>
+          <div style="font-size:0.72rem;color:#52b788;margin-top:2px;">${c.community} · ${c.market} · ${c.agentType||'Realtor'}</div>
+          ${toneDisplay}
+        </div>
+        <button class="gen-btn" style="font-size:0.7rem;padding:0.4rem 1rem;margin:0;" onclick="showForm()">+ Add Client</button>
+      </div>
+
+      <div class="refresh-panel">
+        <div class="refresh-title">📅 Monthly Refresh — ${new Date().toLocaleString('default',{month:'long',year:'numeric'})}</div>
+        <div class="refresh-grid">
+          <div class="refresh-field"><label>Local Events / Community News</label><textarea id="r-events" placeholder="e.g. New amenity center opening at The Woods, Coweta Fall Festival..." onchange="saveMonthly(${idx})">${c.monthlyInputs?.events||''}</textarea></div>
+          <div class="refresh-field"><label>Personal Life Updates</label><textarea id="r-personal" placeholder="e.g. Girls started walking, just got back from a family trip..." onchange="saveMonthly(${idx})">${c.monthlyInputs?.personal||''}</textarea></div>
+          <div class="refresh-field"><label>Anything to Promote This Month</label><textarea id="r-promote" placeholder="e.g. Phase 3 lots just released, new quick move-in homes available..." onchange="saveMonthly(${idx})">${c.monthlyInputs?.promote||''}</textarea></div>
+        </div>
+        <div class="refresh-note">Fill these in before generating captions — AI will weave this context into every post naturally.</div>
+      </div>
+
+      <div class="excl-banner">
+        <div style="font-size:1rem;">🔒</div>
+        <div class="excl-banner-text"><strong>Exclusive Territory:</strong> ${c.community}, ${c.market} is locked to ${c.name}. No other Curbloom client receives content for this market.</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val">30</div><div class="stat-label">Posts / Month</div></div>
+        <div class="stat-card"><div class="stat-val">2</div><div class="stat-label">Platforms</div></div>
+        <div class="stat-card"><div class="stat-val">${c.tones?.length||0}</div><div class="stat-label">Tone Markers</div></div>
+        <div class="stat-card"><div class="stat-val">${apiKey?'AI':'Base'}</div><div class="stat-label">Caption Mode</div></div>
+      </div>
+
+      <div class="section-divider">30-Day Content Calendar</div>
+      <div class="cal-header">
+        <div class="cal-hcell" style="text-align:center;">Day</div>
+        <div class="cal-hcell">Platform</div>
+        <div class="cal-hcell">Type</div>
+        <div class="cal-hcell">Hook / Topic</div>
+        <div class="cal-hcell">Action</div>
+      </div>
+      <div class="cal-body">${calRows}</div>
+      <div id="captionArea"></div>
+    </div>`;
+}
+
+function saveMonthly(idx) {
+  clients[idx].monthlyInputs = {
+    events: document.getElementById('r-events')?.value || '',
+    personal: document.getElementById('r-personal')?.value || '',
+    promote: document.getElementById('r-promote')?.value || '',
+  };
+  Object.keys(captionCache).forEach(k => { if (k.startsWith(clients[idx].name)) delete captionCache[k]; });
+}
+
+async function showCaption(clientIdx, day, type, platform, format, hook) {
+  selectedDay = day;
+  const c = clients[clientIdx];
+  const area = document.getElementById('captionArea');
+  area.innerHTML = `<div class="caption-panel"><div class="cp-loading"><div class="spinner"></div>${apiKey ? 'Generating caption with AI...' : 'Building caption...'}</div></div>`;
+  area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const caption = await generateCaptionAI(c, day, type, platform, format, hook);
+  const tip = generateTip(type);
+  area.innerHTML = `
+    <div class="caption-panel">
+      <div class="cp-header">
+        <div class="cp-title">Day ${day} Caption — ${platform} · ${type}</div>
+        <span class="badge ${platform==='Instagram'?'b-ig':'b-fb'}">${platform}</span>
+      </div>
+      <div class="cp-hook">"${hook}"</div>
+      <div class="cp-body" id="capText">${caption}</div>
+      <div class="cp-meta">
+        <button class="copy-btn" id="cpyBtn" onclick="doCopy()">📋 Copy Caption</button>
+        <button class="regen-btn" onclick="regenCaption(${clientIdx},${day},'${type}','${platform}','${format.replace(/'/g,"\\'")}','${hook.replace(/'/g,"\\'")}')">🔄 Regenerate</button>
+        <span class="canva-note">Paste into Canva, Meta Business Suite, or Later</span>
+      </div>
+      <div class="cp-tip">💡 ${tip}</div>
+    </div>`;
+}
+
+async function regenCaption(clientIdx, day, type, platform, format, hook) {
+  delete captionCache[`${clients[clientIdx].name}-${day}`];
+  await showCaption(clientIdx, day, type, platform, format, hook);
+}
+
+function doCopy() {
+  navigator.clipboard.writeText(document.getElementById('capText').innerText).then(() => {
+    const btn = document.getElementById('cpyBtn');
+    btn.textContent = '✅ Copied!'; btn.classList.add('done');
+    setTimeout(() => { btn.textContent = '📋 Copy Caption'; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+// ── PRELOAD CLIENTS ──
+clients.push({
+  name: "Blake Mason", community: "The Woods", market: "Coweta, OK",
+  agentType: "Lennar Sales Pro",
+  tones: ["Direct & bold", "Motivational", "Warm & friendly"],
+  intro: "Hey I'm Blake — I help families find their perfect home at The Woods. I'm straight with people and I make the process easy.",
+  phrases: "Always says 'let's make it happen' — never wants to sound salesy",
+  personal: "Has twin girls born 2025, hits the gym at 5am daily, very competitive, top performer",
+  recentWin: "Top sales performer Q1, new phase opening at The Woods",
+  idealBuyer: "Move-up buyers with young families",
+  goal: "Generate buyer leads", monthlyInputs: {}
+});
+clients.push({
+  name: "Sara Hoffman", community: "Webb City", market: "SWMO / Joplin Metro",
+  agentType: "Independent Realtor",
+  tones: ["Warm & friendly","Professional","Casual","Humorous","Community-focused","Educational"],
+  intro: "I'm Sara — I help people find homes in Webb City and the surrounding area. I grew up here, I know every street, and I want my clients to feel like they have a friend in the process.",
+  phrases: "Loves local flavor — always mentions restaurants, shops, the school system. Never wants to sound pushy or salesy.",
+  personal: "Sports mom with three sons and dogs. Loves interior design, travel, the outdoors. Grew up in Webb City, still integrated in the school system and parks. Latergram girl — never posts exact real-time location. Jumped into real estate at 39. Posts with her face get the most engagement even though she doesn't love being on camera. Has design projects she hasn't shared yet.",
+  recentWin: "Just got licensed, working with 5 active buyers, building from zero with consistency and hustle",
+  idealBuyer: "Respectful buyers with realistic expectations — people with ideas and dreams who are excited about finding a home",
+  goal: "Build name recognition", monthlyInputs: {}
+});
+activeIdx = 0;
+renderSidebar();
+renderClient(0);
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom — Client Reporting</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0b0f14; color: #e8e8e8; min-height: 100vh; }
+
+  .topnav { background: #0f1419; border-bottom: 1px solid #1a2535; padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+  .nav-logo { font-size: 1rem; font-weight: 800; color: #52b788; letter-spacing: 3px; margin-right: auto; text-decoration: none; }
+  .nav-link { font-size: 0.72rem; color: #555; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; padding: 0.3rem 0.6rem; border-radius: 5px; }
+  .nav-link:hover { color: #74c69d; }
+  .nav-link.active { color: #52b788; background: #1a2e22; }
+
+  .header { background: #111620; border-bottom: 2px solid #2d6a4f; padding: 0.85rem 1.8rem; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 1.35rem; font-weight: 800; color: #52b788; letter-spacing: 3px; }
+  .logo span { color: #b7e4c7; font-size: 0.6rem; display: block; letter-spacing: 2px; font-weight: 500; margin-top: -1px; }
+  .header-badge { background: #1a2e22; border: 1px solid #2d6a4f; border-radius: 20px; padding: 4px 14px; font-size: 0.65rem; color: #52b788; letter-spacing: 1px; }
+
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 105px); }
+
+  .sidebar { background: #0d1118; border-right: 1px solid #1a2030; display: flex; flex-direction: column; }
+  .sidebar-top { padding: 1.1rem; flex: 1; overflow-y: auto; }
+  .sidebar-label { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: #52b788; margin-bottom: 0.7rem; font-weight: 700; }
+  .client-card { background: #161d2a; border: 1px solid #1e2838; border-radius: 9px; padding: 0.8rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.18s; position: relative; overflow: hidden; }
+  .client-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: background 0.18s; }
+  .client-card:hover::before, .client-card.active::before { background: #52b788; }
+  .client-card.active { border-color: #2d6a4f; background: #132010; }
+  .client-name { font-weight: 700; font-size: 0.85rem; }
+  .client-sub { font-size: 0.65rem; color: #52b788; margin-top: 2px; }
+  .add-btn { margin: 0 1.1rem 1.1rem; background: transparent; border: 1px dashed #2d6a4f; border-radius: 8px; padding: 0.65rem; color: #52b788; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; width: calc(100% - 2.2rem); font-family: inherit; }
+  .add-btn:hover { background: #132010; }
+
+  .main { padding: 1.4rem 1.8rem; overflow-y: auto; }
+
+  .section-divider { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #52b788; margin: 1.2rem 0 0.8rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .section-divider::after { content: ''; flex: 1; height: 1px; background: #1a2030; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.4rem; }
+  .stat-card { background: #111620; border: 1px solid #1e2838; border-radius: 10px; padding: 1rem 1.1rem; }
+  .stat-label { font-size: 0.62rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.35rem; }
+  .stat-val { font-size: 1.6rem; font-weight: 800; color: #52b788; }
+  .stat-change { font-size: 0.7rem; margin-top: 3px; }
+  .change-up { color: #52b788; }
+  .change-down { color: #f4a261; }
+  .change-na { color: #444; }
+
+  .data-entry { background: #111620; border: 1px solid #1e2838; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem; }
+  .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 0.75rem; }
+  .data-field label { display: block; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; color: #74c69d; margin-bottom: 0.3rem; }
+  .data-field input { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.5rem 0.7rem; color: #e8e8e8; font-size: 0.82rem; font-family: inherit; outline: none; transition: border-color 0.2s; }
+  .data-field input:focus { border-color: #52b788; }
+  .save-btn { background: linear-gradient(135deg, #2d6a4f, #52b788); border: none; border-radius: 8px; padding: 0.55rem 1.5rem; color: white; font-weight: 700; font-size: 0.8rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .save-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 15px rgba(82,183,136,0.3); }
+
+  .month-tabs { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .month-tab { padding: 0.35rem 0.9rem; border-radius: 20px; border: 1px solid #1e2838; background: transparent; color: #555; font-size: 0.72rem; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .month-tab.active { background: #2d6a4f; border-color: #52b788; color: #b7e4c7; font-weight: 600; }
+  .month-tab:hover:not(.active) { border-color: #2d6a4f; color: #74c69d; }
+
+  .top-posts { background: #111620; border: 1px solid #1e2838; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.2rem; }
+  .post-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid #1a2030; }
+  .post-row:last-child { border-bottom: none; }
+  .post-name { flex: 1; font-size: 0.8rem; color: #d8d8d8; }
+  .post-eng { font-size: 0.72rem; color: #52b788; font-weight: 700; }
+  .post-add { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+  .post-add input { flex: 1; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.45rem 0.7rem; color: #e8e8e8; font-size: 0.78rem; font-family: inherit; outline: none; }
+  .post-add input:focus { border-color: #52b788; }
+  .post-add button { background: transparent; border: 1px solid #2d6a4f; border-radius: 7px; padding: 0.45rem 0.9rem; color: #52b788; font-size: 0.72rem; cursor: pointer; font-family: inherit; white-space: nowrap; }
+
+  .notes-area { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 8px; padding: 0.75rem; color: #d8d8d8; font-size: 0.8rem; font-family: inherit; resize: vertical; min-height: 80px; outline: none; }
+  .notes-area:focus { border-color: #52b788; }
+
+  .report-btn { background: linear-gradient(135deg, #1a3050, #2a4a80); border: 1px solid #2a4a80; border-radius: 8px; padding: 0.65rem 1.8rem; color: #90b8f8; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .report-btn:hover { background: linear-gradient(135deg, #2a4a80, #3a5a90); box-shadow: 0 3px 15px rgba(90,140,200,0.2); }
+
+  .no-client { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 65vh; gap: 0.9rem; text-align: center; color: #333; }
+  .no-client p { font-size: 0.8rem; max-width: 260px; line-height: 1.65; color: #444; }
+
+  /* PDF OVERLAY */
+  .pdf-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 2rem; overflow-y: auto; }
+  .pdf-overlay.show { display: flex; }
+  .pdf-doc { background: white; color: #111; width: 760px; padding: 3rem; border-radius: 4px; font-family: 'DM Sans', sans-serif; }
+  .pdf-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #2d6a4f; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .pdf-logo { font-size: 1.5rem; font-weight: 800; color: #1a3828; letter-spacing: 3px; }
+  .pdf-meta { text-align: right; font-size: 0.75rem; color: #666; line-height: 1.7; }
+  .pdf-client { font-size: 1.2rem; font-weight: 700; color: #111; margin-bottom: 0.25rem; }
+  .pdf-period { font-size: 0.8rem; color: #666; }
+  .pdf-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+  .pdf-metric { text-align: center; padding: 1.25rem; border: 1px solid #e8e8e8; border-radius: 8px; }
+  .pdf-metric-val { font-size: 2rem; font-weight: 800; color: #2d6a4f; }
+  .pdf-metric-label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .pdf-metric-change { font-size: 0.72rem; margin-top: 4px; color: #52b788; font-weight: 600; }
+  .pdf-section-title { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: #2d6a4f; font-weight: 700; margin-bottom: 0.75rem; border-bottom: 1px solid #e8e8e8; padding-bottom: 0.4rem; }
+  .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-size: 0.82rem; }
+  .pdf-table th { background: #f5f5f5; padding: 0.5rem 0.75rem; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: #666; }
+  .pdf-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #f0f0f0; }
+  .pdf-notes { font-size: 0.82rem; color: #444; line-height: 1.7; margin-bottom: 2rem; white-space: pre-wrap; }
+  .pdf-footer { font-size: 0.68rem; color: #aaa; text-align: center; border-top: 1px solid #e8e8e8; padding-top: 1rem; margin-top: 1rem; }
+  .pdf-excl { background: #f8f4ff; border: 1px solid #d4a0f0; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.78rem; color: #5a1a7a; }
+  .pdf-close { position: fixed; top: 1.5rem; right: 1.5rem; background: #1a2535; border: 1px solid #2d6a4f; border-radius: 8px; padding: 0.5rem 1rem; color: #52b788; font-size: 0.78rem; cursor: pointer; font-family: inherit; z-index: 101; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="nav-logo" href="index.html">CURBLOOM</a>
+  <a class="nav-link" href="c4.html">C4</a>
+  <a class="nav-link active" href="reporting.html">Reporting</a>
+  <a class="nav-link" href="post-designer.html">Post Designer</a>
+</nav>
+
+<div class="header">
+  <div>
+    <div class="logo">REPORTING <span>CLIENT METRICS DASHBOARD</span></div>
+  </div>
+  <div class="header-badge">Exclusive Territory Model</div>
+</div>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-label">Your Clients</div>
+      <div id="clientList"></div>
+    </div>
+    <button class="add-btn" onclick="addClientPrompt()">+ Add Client</button>
+  </div>
+  <div class="main" id="mainArea">
+    <div class="no-client">
+      <div style="font-size:2.5rem;">📊</div>
+      <p>Select a client to view and enter their monthly metrics.</p>
+    </div>
+  </div>
+</div>
+
+<div class="pdf-overlay" id="pdfOverlay">
+  <button class="pdf-close" onclick="closePDF()">✕ Close — Print with Ctrl+P</button>
+  <div class="pdf-doc" id="pdfDoc"></div>
+</div>
+
+<script>
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+let clients = [
+  { name: "Blake Mason", market: "Coweta, OK · The Woods", agentType: "Lennar Sales Pro", data: {}, topPosts: {}, notes: {} },
+  { name: "Sara Hoffman", market: "SWMO / Joplin Metro", agentType: "Independent Realtor", data: {}, topPosts: {}, notes: {} }
+];
+let activeIdx = 0;
+let activeMonth = `${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`;
+
+function renderSidebar() {
+  document.getElementById('clientList').innerHTML = clients.map((c,i) => `
+    <div class="client-card ${i===activeIdx?'active':''}" onclick="selectClient(${i})">
+      <div class="client-name">${c.name}</div>
+      <div class="client-sub">${c.market}</div>
+    </div>`).join('');
+}
+
+function selectClient(idx) {
+  activeIdx = idx;
+  renderSidebar();
+  renderMain();
+}
+
+function addClientPrompt() {
+  const name = prompt('Client full name:');
+  if (!name) return;
+  const market = prompt('Market / Community:') || '';
+  clients.push({ name, market, agentType: 'Realtor', data: {}, topPosts: {}, notes: {} });
+  activeIdx = clients.length - 1;
+  renderSidebar();
+  renderMain();
+}
+
+function getMonthList() {
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(`${MONTHS[d.getMonth()]} ${d.getFullYear()}`);
+  }
+  return months;
+}
+
+function renderMain() {
+  const c = clients[activeIdx];
+  const months = getMonthList();
+  if (!months.includes(activeMonth)) activeMonth = months[months.length - 1];
+
+  const cur = c.data[activeMonth] || {};
+  const prevIdx = months.indexOf(activeMonth) - 1;
+  const prev = prevIdx >= 0 ? (c.data[months[prevIdx]] || {}) : {};
+
+  function change(key) {
+    const cv = parseInt(cur[key]) || 0;
+    const pv = parseInt(prev[key]) || 0;
+    if (!pv) return `<span class="change-na">— first month</span>`;
+    const pct = Math.round(((cv - pv) / pv) * 100);
+    return pct >= 0 ? `<span class="change-up">▲ ${pct}% vs last month</span>` : `<span class="change-down">▼ ${Math.abs(pct)}% vs last month</span>`;
+  }
+
+  const topPosts = c.topPosts[activeMonth] || [];
+  const notes = c.notes[activeMonth] || '';
+
+  document.getElementById('mainArea').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div>
+        <div style="font-size:1.1rem;font-weight:800;">${c.name}</div>
+        <div style="font-size:0.72rem;color:#52b788;margin-top:2px;">${c.market} · ${c.agentType}</div>
+      </div>
+      <button class="report-btn" onclick="generateReport()">📄 Generate Client Report</button>
+    </div>
+
+    <div class="month-tabs">${months.map(m=>`<button class="month-tab ${m===activeMonth?'active':''}" onclick="switchMonth('${m}')">${m}</button>`).join('')}</div>
+
+    <div class="section-divider">Enter This Month's Numbers</div>
+    <div class="data-entry">
+      <div class="data-grid">
+        <div class="data-field"><label>Followers</label><input id="d-followers" type="number" value="${cur.followers||''}" placeholder="0" /></div>
+        <div class="data-field"><label>Total Likes</label><input id="d-likes" type="number" value="${cur.likes||''}" placeholder="0" /></div>
+        <div class="data-field"><label>Comments</label><input id="d-comments" type="number" value="${cur.comments||''}" placeholder="0" /></div>
+        <div class="data-field"><label>Shares / Saves</label><input id="d-shares" type="number" value="${cur.shares||''}" placeholder="0" /></div>
+        <div class="data-field"><label>DM Leads</label><input id="d-leads" type="number" value="${cur.leads||''}" placeholder="0" /></div>
+        <div class="data-field"><label>Reach</label><input id="d-reach" type="number" value="${cur.reach||''}" placeholder="0" /></div>
+        <div class="data-field"><label>Posts Published</label><input id="d-posts" type="number" value="${cur.posts||''}" placeholder="30" /></div>
+        <div class="data-field"><label>Stories</label><input id="d-stories" type="number" value="${cur.stories||''}" placeholder="0" /></div>
+      </div>
+      <button class="save-btn" onclick="saveData()">Save Metrics</button>
+    </div>
+
+    <div class="section-divider">Monthly Summary</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Total Engagement</div><div class="stat-val">${((parseInt(cur.likes)||0)+(parseInt(cur.comments)||0)+(parseInt(cur.shares)||0)).toLocaleString()}</div><div class="stat-change">${change('likes')}</div></div>
+      <div class="stat-card"><div class="stat-label">DM Leads</div><div class="stat-val">${cur.leads||'—'}</div><div class="stat-change">${cur.leads ? change('leads') : '<span class="change-na">Not entered</span>'}</div></div>
+      <div class="stat-card"><div class="stat-label">Reach</div><div class="stat-val">${cur.reach ? parseInt(cur.reach).toLocaleString() : '—'}</div><div class="stat-change">${cur.reach ? change('reach') : '<span class="change-na">Not entered</span>'}</div></div>
+    </div>
+
+    <div class="section-divider">Top Performing Posts</div>
+    <div class="top-posts">
+      ${topPosts.length ? topPosts.map((p,i)=>`<div class="post-row"><span class="post-name">${p.name}</span><span class="post-eng">${p.eng} engagements</span></div>`).join('') : '<div style="font-size:0.78rem;color:#444;padding:0.5rem 0;">No top posts recorded yet for this month.</div>'}
+      <div class="post-add">
+        <input id="p-name" placeholder="Post title or hook..." />
+        <input id="p-eng" type="number" placeholder="Total engagements" style="width:160px;" />
+        <button onclick="addTopPost()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="section-divider">Strategy Notes (for client report)</div>
+    <div style="margin-bottom:1.2rem;">
+      <textarea class="notes-area" id="d-notes" placeholder="e.g. Personality posts outperformed educational this month. Recommend increasing Reel frequency in ${activeMonth.split(' ')[0]}...">${notes}</textarea>
+      <div style="margin-top:0.5rem;"><button class="save-btn" onclick="saveNotes()">Save Notes</button></div>
+    </div>`;
+}
+
+function switchMonth(m) {
+  activeMonth = m;
+  renderMain();
+}
+
+function saveData() {
+  const c = clients[activeIdx];
+  c.data[activeMonth] = {
+    followers: document.getElementById('d-followers').value,
+    likes: document.getElementById('d-likes').value,
+    comments: document.getElementById('d-comments').value,
+    shares: document.getElementById('d-shares').value,
+    leads: document.getElementById('d-leads').value,
+    reach: document.getElementById('d-reach').value,
+    posts: document.getElementById('d-posts').value,
+    stories: document.getElementById('d-stories').value,
+  };
+  const btn = event.target;
+  btn.textContent = '✅ Saved!';
+  setTimeout(() => { btn.textContent = 'Save Metrics'; renderMain(); }, 1200);
+}
+
+function saveNotes() {
+  clients[activeIdx].notes[activeMonth] = document.getElementById('d-notes').value;
+  const btn = event.target;
+  btn.textContent = '✅ Saved!';
+  setTimeout(() => { btn.textContent = 'Save Notes'; }, 1200);
+}
+
+function addTopPost() {
+  const name = document.getElementById('p-name').value.trim();
+  const eng = document.getElementById('p-eng').value;
+  if (!name) return;
+  if (!clients[activeIdx].topPosts[activeMonth]) clients[activeIdx].topPosts[activeMonth] = [];
+  clients[activeIdx].topPosts[activeMonth].push({ name, eng: eng || '—' });
+  renderMain();
+}
+
+function generateReport() {
+  const c = clients[activeIdx];
+  const months = getMonthList();
+  const cur = c.data[activeMonth] || {};
+  const prevIdx = months.indexOf(activeMonth) - 1;
+  const prev = prevIdx >= 0 ? (c.data[months[prevIdx]] || {}) : {};
+  const topPosts = c.topPosts[activeMonth] || [];
+  const notes = c.notes[activeMonth] || 'No strategy notes added for this month.';
+
+  function fmtChange(key) {
+    const cv = parseInt(cur[key]) || 0;
+    const pv = parseInt(prev[key]) || 0;
+    if (!pv) return 'First month';
+    const pct = Math.round(((cv - pv) / pv) * 100);
+    return pct >= 0 ? `+${pct}%` : `${pct}%`;
+  }
+
+  const totalEng = ((parseInt(cur.likes)||0)+(parseInt(cur.comments)||0)+(parseInt(cur.shares)||0));
+
+  document.getElementById('pdfDoc').innerHTML = `
+    <div class="pdf-header">
+      <div>
+        <div class="pdf-logo">CURBLOOM</div>
+        <div style="font-size:0.72rem;color:#888;margin-top:4px;">Social Media Marketing · Real Estate</div>
+      </div>
+      <div class="pdf-meta">
+        <div class="pdf-client">${c.name}</div>
+        <div class="pdf-period">${activeMonth} Performance Report</div>
+        <div style="margin-top:4px;">${c.market}</div>
+      </div>
+    </div>
+
+    <div class="pdf-excl">🔒 <strong>Exclusive Territory:</strong> ${c.market} is locked to ${c.name}. No other agent receives Curbloom services in this market.</div>
+
+    <div class="pdf-section-title">Key Metrics — ${activeMonth}</div>
+    <div class="pdf-metrics">
+      <div class="pdf-metric"><div class="pdf-metric-val">${totalEng.toLocaleString()}</div><div class="pdf-metric-label">Total Engagement</div><div class="pdf-metric-change">${fmtChange('likes')} vs last month</div></div>
+      <div class="pdf-metric"><div class="pdf-metric-val">${cur.leads||'—'}</div><div class="pdf-metric-label">DM Leads</div><div class="pdf-metric-change">${cur.leads ? fmtChange('leads') + ' vs last month' : 'Track DMs for this'}</div></div>
+      <div class="pdf-metric"><div class="pdf-metric-val">${cur.reach ? parseInt(cur.reach).toLocaleString() : '—'}</div><div class="pdf-metric-label">Total Reach</div><div class="pdf-metric-change">${cur.reach ? fmtChange('reach') + ' vs last month' : 'Check platform insights'}</div></div>
+    </div>
+
+    <div class="pdf-section-title">Engagement Breakdown</div>
+    <table class="pdf-table">
+      <tr><th>Metric</th><th>This Month</th><th>Last Month</th><th>Change</th></tr>
+      <tr><td>Likes</td><td>${cur.likes||'—'}</td><td>${prev.likes||'—'}</td><td>${cur.likes && prev.likes ? fmtChange('likes') : '—'}</td></tr>
+      <tr><td>Comments</td><td>${cur.comments||'—'}</td><td>${prev.comments||'—'}</td><td>${cur.comments && prev.comments ? fmtChange('comments') : '—'}</td></tr>
+      <tr><td>Shares / Saves</td><td>${cur.shares||'—'}</td><td>${prev.shares||'—'}</td><td>${cur.shares && prev.shares ? fmtChange('shares') : '—'}</td></tr>
+      <tr><td>Followers</td><td>${cur.followers||'—'}</td><td>${prev.followers||'—'}</td><td>${cur.followers && prev.followers ? fmtChange('followers') : '—'}</td></tr>
+      <tr><td>Posts Published</td><td>${cur.posts||'—'}</td><td>${prev.posts||'—'}</td><td>—</td></tr>
+    </table>
+
+    ${topPosts.length ? `<div class="pdf-section-title">Top Performing Posts</div>
+    <table class="pdf-table">
+      <tr><th>Post</th><th>Engagements</th></tr>
+      ${topPosts.map(p=>`<tr><td>${p.name}</td><td>${p.eng}</td></tr>`).join('')}
+    </table>` : ''}
+
+    <div class="pdf-section-title">Strategy &amp; Next Steps</div>
+    <div class="pdf-notes">${notes}</div>
+
+    <div class="pdf-footer">Curbloom · Social Media Marketing · Real Estate &amp; New Home Sales<br>This report is confidential and prepared exclusively for ${c.name}. Generated ${new Date().toLocaleDateString()}.</div>`;
+
+  document.getElementById('pdfOverlay').classList.add('show');
+}
+
+function closePDF() {
+  document.getElementById('pdfOverlay').classList.remove('show');
+}
+
+renderSidebar();
+renderMain();
+</script>
+</body>
+</html>

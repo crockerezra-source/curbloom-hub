@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom — The Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1e4d2b;
+    --green-mid: #2d6a4f;
+    --green-light: #52b788;
+    --green-pale: #b7e4c7;
+    --cream: #f0ead6;
+    --orange: #f4a261;
+    --purple: #c084fc;
+    --blue: #60a5fa;
+    --yellow: #ffd166;
+    --teal: #74d4d4;
+    --bg: #0b0f14;
+    --surface: #111620;
+    --surface2: #161d2a;
+    --border: #1e2838;
+    --text: #e8e8e8;
+    --muted: #555;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: #0d1118; border-bottom: 2px solid var(--green-mid); padding: 1.2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 1.6rem; font-weight: 800; color: var(--green-light); letter-spacing: 4px; }
+  .logo-sub { font-size: 0.62rem; color: #444; letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+  .header-badge { background: #1a2e22; border: 1px solid var(--green-mid); border-radius: 20px; padding: 5px 16px; font-size: 0.68rem; color: var(--green-light); letter-spacing: 1px; }
+
+  /* HERO */
+  .hero { padding: 2.5rem 2.5rem 1.5rem; max-width: 900px; }
+  .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 0.5rem; }
+  .hero h1 em { color: var(--green-light); font-style: normal; }
+  .hero p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; max-width: 560px; }
+
+  /* MAIN GRID */
+  .main { padding: 1rem 2.5rem 3rem; max-width: 1200px; }
+
+  /* SECTION */
+  .section-head { font-size: 0.62rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--green-light); font-weight: 700; margin: 2rem 0 0.85rem; display: flex; align-items: center; gap: 0.5rem; }
+  .section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .phase-label { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; font-size: 0.62rem; color: var(--muted); margin-bottom: 0.75rem; display: inline-block; }
+
+  /* TOOL GRID */
+  .tool-grid { display: grid; gap: 0.75rem; margin-bottom: 0.5rem; }
+  .tg-2 { grid-template-columns: 1fr 1fr; }
+  .tg-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .tg-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  /* TOOL CARD */
+  .tool-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.1rem 1.2rem; transition: all 0.2s; position: relative; overflow: hidden; }
+  .tool-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: transparent; transition: background 0.2s; }
+  .tool-card:hover { border-color: var(--green-mid); transform: translateY(-2px); }
+  .tool-card.primary::before { background: var(--green-light); }
+  .tool-card.orange-card::before { background: var(--orange); }
+  .tool-card.purple-card::before { background: var(--purple); }
+  .tool-card.blue-card::before { background: var(--blue); }
+
+  .tc-badge { display: inline-block; font-size: 0.58rem; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 8px; font-weight: 700; margin-bottom: 0.5rem; }
+  .badge-core { background: #132010; color: var(--green-light); border: 1px solid var(--green-mid); }
+  .badge-bo { background: #1a1220; color: var(--orange); border: 1px solid #4a2010; }
+  .badge-cl { background: #100820; color: var(--purple); border: 1px solid #4a1a6a; }
+  .badge-doc { background: #0e1020; color: var(--blue); border: 1px solid #1a2060; }
+
+  .tc-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+  .tc-desc { font-size: 0.75rem; color: #666; line-height: 1.55; margin-bottom: 0.85rem; }
+  .tc-status { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; color: #444; margin-bottom: 0.75rem; }
+  .tc-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-live { background: var(--green-light); box-shadow: 0 0 5px var(--green-light); }
+  .dot-ready { background: var(--yellow); }
+  .dot-planned { background: #333; }
+
+  .tc-actions { display: flex; gap: 0.5rem; }
+  .tc-btn { padding: 0.42rem 0.85rem; border-radius: 7px; font-size: 0.72rem; cursor: pointer; font-family: inherit; font-weight: 600; transition: all 0.18s; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; border: none; }
+  .btn-open { background: var(--green-mid); color: #b7e4c7; }
+  .btn-open:hover { background: var(--green-light); color: #0b0f14; }
+  .btn-open-bo { background: #2a1a0a; color: var(--orange); border: 1px solid #4a2010; }
+  .btn-open-bo:hover { background: #3a2010; }
+  .btn-open-cl { background: #1a0e28; color: var(--purple); border: 1px solid #4a1a6a; }
+  .btn-open-cl:hover { background: #280e38; }
+  .btn-dl { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-dl:hover { border-color: var(--green-mid); color: var(--green-light); }
+
+  /* WORKFLOW ARROW */
+  .phase-arrow { text-align: center; padding: 0.5rem 0; font-size: 0.65rem; color: #333; letter-spacing: 1px; }
+
+  /* PLANNED ROWS */
+  .planned-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.8rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.4rem; }
+  .planned-name { flex: 1; font-size: 0.78rem; color: #444; }
+  .planned-status { font-size: 0.62rem; color: #333; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* STATS ROW */
+  .metrics-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.65rem; margin-bottom: 1rem; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.8rem 1rem; text-align: center; }
+  .metric-val { font-size: 1.5rem; font-weight: 800; color: var(--green-light); }
+  .metric-label { font-size: 0.6rem; color: #444; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  @media (max-width: 900px) {
+    .tg-3 { grid-template-columns: 1fr 1fr; }
+    .tg-4 { grid-template-columns: 1fr 1fr; }
+    .metrics-row { grid-template-columns: repeat(3, 1fr); }
+    .main, .hero { padding-left: 1.2rem; padding-right: 1.2rem; }
+    .header { padding: 1rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">CURBLOOM</div>
+    <div class="logo-sub">The Playbook — All Tools &amp; Workflow</div>
+  </div>
+  <div class="header-badge">Exclusive Territory Model</div>
+</div>
+
+<div class="hero">
+  <h1>Your <em>complete</em> operating system.</h1>
+  <p>Every tool, every document, every phase of the Curbloom workflow — in one place. Click to open any tool directly. The C4 is where everything starts.</p>
+</div>
+
+<div class="main">
+
+  <!-- METRICS -->
+  <div class="metrics-row">
+    <div class="metric-card"><div class="metric-val">5</div><div class="metric-label">Tools Built</div></div>
+    <div class="metric-card"><div class="metric-val">2</div><div class="metric-label">Active Clients</div></div>
+    <div class="metric-card"><div class="metric-val">30</div><div class="metric-label">Posts / Client / Mo</div></div>
+    <div class="metric-card"><div class="metric-val">$700</div><div class="metric-label">Target Rate / Client</div></div>
+    <div class="metric-card"><div class="metric-val">~$0.50</div><div class="metric-label">API Cost / Client / Mo</div></div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="section-head">Phase 1 — Client Acquisition</div>
+  <div class="tool-grid tg-3">
+    <div class="tool-card orange-card">
+      <div class="tc-badge badge-cl">Client-facing</div>
+      <div class="tc-name">Onboarding Questionnaire</div>
+      <div class="tc-desc">Client fills this out before their onboarding call. Captures tone, voice, personal details, market, and goals — everything the C4 needs to generate personalized content.</div>
+      <div class="tc-status"><div class="tc-dot dot-live"></div> Built &amp; tested with Sara Hoffman</div>
+      <div class="tc-actions">
+        <a class="tc-btn btn-open-cl" href="Curbloom_Client_Onboarding_Questionnaire_v2.docx" download>⬇ Download</a>
+      </div>
+    </div>
+    <div class="tool-card orange-card">
+      <div class="tc-badge badge-cl">Client-facing</div>
+      <div class="tc-name">Pricing &amp; Offer Sheet</div>
+      <div class="tc-desc">One-pager showing the three tiers — Founder ($300), Growth ($700), Elite ($1,200). The tool that closes people when they're thinking about it at midnight.</div>
+      <div class="tc-status"><div class="tc-dot dot-ready"></div> Build when needed</div>
+      <div class="tc-actions">
+        <span style="font-size:0.7rem;color:#444;padding:0.4rem 0;">Rebuild from prior session</span>
+      </div>
+    </div>
+    <div class="tool-card orange-card">
+      <div class="tc-badge badge-cl">Client-facing</div>
+      <div class="tc-name">Sample Content Preview</div>
+      <div class="tc-desc">Week 1 sample content for a prospect — shows them exactly what their 30-day calendar looks like before they sign. Built for Sara Hoffman.</div>
+      <div class="tc-status"><div class="tc-dot dot-live"></div> Built for Sara</div>
+      <div class="tc-actions">
+        <a class="tc-btn btn-open-cl" href="Sara_Hoffman_Sample_Content_Week1.docx" download>⬇ Download</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-arrow">▼ Client signs → you enter their info</div>
+
+  <!-- PHASE 2 -->
+  <div class="section-head">Phase 2 — Client Onboarding</div>
+  <div class="tool-grid tg-2">
+    <div class="tool-card primary">
+      <div class="tc-badge badge-core">Core Tool</div>
+      <div class="tc-name">C4 — Content Command Center</div>
+      <div class="tc-desc">Add a client using their questionnaire answers. Select tones, enter personal details and goals. Monthly Refresh panel lets you add local events, personal updates, and promotions before generating. Every caption generated live by AI — no two posts are ever the same.</div>
+      <div class="tc-status"><div class="tc-dot dot-live"></div> Blake Mason + Sara Hoffman loaded · AI-powered</div>
+      <div class="tc-actions">
+        <a class="tc-btn btn-open" href="c4.html">⚡ Open C4</a>
+      </div>
+    </div>
+    <div class="tool-card blue-card">
+      <div class="tc-badge badge-doc">Document</div>
+      <div class="tc-name">How the C4 Works</div>
+      <div class="tc-desc">Quick-reference guide for your own use — explains every section of the C4, the monthly refresh workflow, and how to add new clients. Keep this handy when onboarding.</div>
+      <div class="tc-status"><div class="tc-dot dot-planned"></div> To be documented</div>
+      <div class="tc-actions">
+        <span style="font-size:0.7rem;color:#444;padding:0.4rem 0;">Build as you scale</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-arrow">▼ C4 generates captions → you build visuals</div>
+
+  <!-- PHASE 3 -->
+  <div class="section-head">Phase 3 — Content Production</div>
+  <div class="tool-grid tg-2">
+    <div class="tool-card orange-card">
+      <div class="tc-badge badge-bo">Back-office</div>
+      <div class="tc-name">Post Designer</div>
+      <div class="tc-desc">6 layouts (Bold Top, Center Card, Split Half, Minimal, Quote, Stat Callout). Brand colors per client. Photo upload with automatic fit. Platform toggle between Instagram (1080×1080) and Facebook (1200×630). Downloads a ready-to-post PNG.</div>
+      <div class="tc-status"><div class="tc-dot dot-live"></div> Blake + Sara branded · Add clients in 30 seconds</div>
+      <div class="tc-actions">
+        <a class="tc-btn btn-open-bo" href="post-designer.html">🎨 Open Designer</a>
+      </div>
+    </div>
+    <div class="tool-card orange-card">
+      <div class="tc-badge badge-bo">Back-office</div>
+      <div class="tc-name">Canva Templates</div>
+      <div class="tc-desc">For clients who want more polished visuals — paste captions from the C4 into Canva templates branded to each client. Post Designer handles quick native graphics; Canva handles premium polish.</div>
+      <div class="tc-status"><div class="tc-dot dot-ready"></div> Build Canva templates per client at onboarding</div>
+      <div class="tc-actions">
+        <a class="tc-btn btn-open-bo" href="https://canva.com" target="_blank">Open Canva ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-arrow">▼ Content published → you track results</div>
+
+  <!-- PHASE 4 -->
+  <div class="section-head">Phase 4 — Reporting &amp; Retention</div>
+  <div class="tool-grid tg-2">
+    <div class="tool-card primary">
+      <div class="tc-badge badge-bo">Back-office</div>
+      <div class="tc-name">Client Reporting Dashboard</div>
+      <div class="tc-desc">Enter monthly metrics per client — followers, likes, comments, shares, DM leads, reach. Dashboard calculates totals and month-over-month changes automatically. Log top-performing posts. Add strategy notes. Generate a clean client-ready PDF report in one click.</div>
+      <div class="tc-status"><div class="tc-dot dot-live"></div> Blake + Sara loaded · PDF export ready</div>
+      <div class="tc-actions">
+        <a class="tc-btn btn-open" href="reporting.html">📊 Open Reporting</a>
+      </div>
+    </div>
+    <div class="tool-card purple-card">
+      <div class="tc-badge badge-cl">Client-facing</div>
+      <div class="tc-name">90-Day Review</div>
+      <div class="tc-desc">Collect testimonial, review 3-month results with the client, and transition Founder ($300) clients to Growth ($700). Use the reporting dashboard data to show concrete growth. This conversation is the whole business model.</div>
+      <div class="tc-status"><div class="tc-dot dot-ready"></div> Process defined — execute at 90 days</div>
+      <div class="tc-actions">
+        <span style="font-size:0.7rem;color:#444;padding:0.4rem 0;">Schedule when client hits day 85</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLANNED -->
+  <div class="section-head">On Deck — Next to Build</div>
+  <div class="planned-row"><div class="tc-dot dot-planned"></div><div class="planned-name">Reel scripts per content type (market update, educational, personality)</div><div class="planned-status">Planned</div></div>
+  <div class="planned-row"><div class="tc-dot dot-planned"></div><div class="planned-name">Competitive benchmarking section in monthly reports</div><div class="planned-status">Planned</div></div>
+  <div class="planned-row"><div class="tc-dot dot-planned"></div><div class="planned-name">Emma (Lennar Sales Pro) loaded into C4 once questionnaire returns</div><div class="planned-status">Waiting on questionnaire</div></div>
+  <div class="planned-row"><div class="tc-dot dot-planned"></div><div class="planned-name">Pricing &amp; offer sheet rebuild with current brand assets</div><div class="planned-status">Planned</div></div>
+  <div class="planned-row"><div class="tc-dot dot-planned"></div><div class="planned-name">Service agreement / contract (digital sign-off)</div><div class="planned-status">Planned</div></div>
+
+</div>
+
+<script>
+// Quick keyboard shortcut: press C to jump to C4, R for Reporting, D for Post Designer
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'c' || e.key === 'C') window.location.href = 'c4.html';
+  if (e.key === 'r' || e.key === 'R') window.location.href = 'reporting.html';
+  if (e.key === 'd' || e.key === 'D') window.location.href = 'post-designer.html';
+});
+</script>
+</body>
+</html>

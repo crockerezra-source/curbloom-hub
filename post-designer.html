@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom — Post Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #0b0f14; color: #e8e8e8; min-height: 100vh; }
+
+  .topnav { background: #0f1419; border-bottom: 1px solid #1a2535; padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
+  .nav-logo { font-size: 1rem; font-weight: 800; color: #52b788; letter-spacing: 3px; margin-right: auto; text-decoration: none; }
+  .nav-link { font-size: 0.72rem; color: #555; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; padding: 0.3rem 0.6rem; border-radius: 5px; }
+  .nav-link:hover { color: #74c69d; }
+  .nav-link.active { color: #52b788; background: #1a2e22; }
+
+  .header { background: #111620; border-bottom: 2px solid #2d6a4f; padding: 0.85rem 1.8rem; display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 1.35rem; font-weight: 800; color: #52b788; letter-spacing: 3px; }
+  .logo span { color: #b7e4c7; font-size: 0.6rem; display: block; letter-spacing: 2px; font-weight: 500; margin-top: -1px; }
+  .header-badge { background: #1a2e22; border: 1px solid #2d6a4f; border-radius: 20px; padding: 4px 14px; font-size: 0.65rem; color: #52b788; letter-spacing: 1px; }
+
+  .app { display: grid; grid-template-columns: 300px 1fr 300px; min-height: calc(100vh - 105px); }
+
+  /* LEFT CONTROLS */
+  .controls { background: #0d1118; border-right: 1px solid #1a2030; padding: 1.1rem; overflow-y: auto; }
+  .ctrl-section { margin-bottom: 1.2rem; }
+  .ctrl-section-title { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #52b788; margin-bottom: 0.65rem; font-weight: 700; display: flex; align-items: center; gap: 0.4rem; }
+  .ctrl-section-title::after { content: ''; flex: 1; height: 1px; background: #1a2030; }
+
+  .ctrl-select { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.5rem 0.7rem; color: #e8e8e8; font-size: 0.8rem; font-family: inherit; outline: none; cursor: pointer; margin-bottom: 0.45rem; }
+  .ctrl-select:focus { border-color: #52b788; }
+
+  .platform-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+  .plat-btn { padding: 0.45rem 0.5rem; border: 1px solid #1e2838; border-radius: 7px; background: transparent; color: #555; font-size: 0.72rem; cursor: pointer; font-family: inherit; text-align: center; transition: all 0.15s; }
+  .plat-btn.active { background: #132010; border-color: #52b788; color: #74c69d; font-weight: 600; }
+
+  .layout-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; }
+  .layout-btn { padding: 0.5rem 0.35rem; border: 1px solid #1e2838; border-radius: 7px; background: #161d2a; color: #555; font-size: 0.65rem; cursor: pointer; font-family: inherit; text-align: center; transition: all 0.15s; line-height: 1.4; }
+  .layout-btn.active { background: #132010; border-color: #52b788; color: #74c69d; font-weight: 600; }
+  .layout-btn:hover:not(.active) { border-color: #2d6a4f; color: #74c69d; }
+
+  .ctrl-label { display: block; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; color: #74c69d; margin-bottom: 0.3rem; }
+  .ctrl-input { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.5rem 0.7rem; color: #e8e8e8; font-size: 0.8rem; font-family: inherit; outline: none; margin-bottom: 0.5rem; transition: border-color 0.2s; }
+  .ctrl-input:focus { border-color: #52b788; }
+  .ctrl-textarea { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.5rem 0.7rem; color: #e8e8e8; font-size: 0.78rem; font-family: inherit; outline: none; resize: vertical; min-height: 65px; margin-bottom: 0.5rem; transition: border-color 0.2s; }
+  .ctrl-textarea:focus { border-color: #52b788; }
+
+  .photo-upload { border: 1px dashed #1e2838; border-radius: 8px; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; font-size: 0.75rem; color: #444; margin-bottom: 0.5rem; }
+  .photo-upload:hover, .photo-upload.has-image { border-color: #2d6a4f; color: #74c69d; }
+
+  .color-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.45rem; }
+  .color-swatch { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #1e2838; cursor: pointer; position: relative; overflow: hidden; flex-shrink: 0; }
+  .color-swatch input[type=color] { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); opacity: 0; cursor: pointer; }
+  .color-label { font-size: 0.72rem; color: #666; }
+
+  .action-btn { width: 100%; padding: 0.65rem; border-radius: 8px; border: none; font-weight: 700; font-size: 0.8rem; cursor: pointer; font-family: inherit; margin-bottom: 0.5rem; transition: all 0.2s; }
+  .btn-download { background: linear-gradient(135deg, #2d6a4f, #52b788); color: white; }
+  .btn-download:hover { transform: translateY(-1px); box-shadow: 0 3px 15px rgba(82,183,136,0.3); }
+  .btn-random { background: transparent; border: 1px solid #1e2838; color: #666; }
+  .btn-random:hover { border-color: #2d6a4f; color: #74c69d; }
+
+  /* CANVAS */
+  .canvas-area { background: #0a0d12; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  canvas { box-shadow: 0 8px 40px rgba(0,0,0,0.6); max-width: 100%; max-height: calc(100vh - 200px); border-radius: 2px; }
+
+  /* RIGHT PANEL */
+  .right-panel { background: #0d1118; border-left: 1px solid #1a2030; padding: 1.1rem; overflow-y: auto; }
+  .content-type-grid { display: flex; flex-direction: column; gap: 0.35rem; }
+  .ct-btn { padding: 0.55rem 0.8rem; border: 1px solid #1e2838; border-radius: 7px; background: #161d2a; color: #555; font-size: 0.72rem; cursor: pointer; font-family: inherit; text-align: left; transition: all 0.15s; }
+  .ct-btn.active { background: #132010; border-color: #52b788; color: #74c69d; font-weight: 600; }
+  .ct-btn:hover:not(.active) { border-color: #2d6a4f; color: #74c69d; }
+  .ct-badge { display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 0.6rem; margin-left: 0.4rem; font-weight: 700; }
+
+  .add-client-row { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.5rem; }
+  .add-client-row input { background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.45rem 0.7rem; color: #e8e8e8; font-size: 0.75rem; font-family: inherit; outline: none; }
+  .add-client-row input:focus { border-color: #52b788; }
+  .add-client-btn { background: transparent; border: 1px dashed #2d6a4f; border-radius: 7px; padding: 0.45rem; color: #52b788; font-size: 0.72rem; cursor: pointer; font-family: inherit; text-align: center; transition: all 0.2s; }
+  .add-client-btn:hover { background: #132010; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="nav-logo" href="index.html">CURBLOOM</a>
+  <a class="nav-link" href="c4.html">C4</a>
+  <a class="nav-link" href="reporting.html">Reporting</a>
+  <a class="nav-link active" href="post-designer.html">Post Designer</a>
+</nav>
+
+<div class="header">
+  <div>
+    <div class="logo">POST DESIGNER <span>VISUAL CONTENT TOOL</span></div>
+  </div>
+  <div class="header-badge">Exclusive Territory Model</div>
+</div>
+
+<div class="app">
+  <!-- LEFT: Controls -->
+  <div class="controls" id="ctrlPanel"></div>
+
+  <!-- CENTER: Canvas -->
+  <div class="canvas-area">
+    <canvas id="postCanvas"></canvas>
+  </div>
+
+  <!-- RIGHT: Content types + client -->
+  <div class="right-panel">
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Client</div>
+      <select class="ctrl-select" id="clientSelect" onchange="switchClient(this.value)"></select>
+      <div class="add-client-row">
+        <input id="nc-name" placeholder="New client name..." />
+        <input id="nc-market" placeholder="Market (e.g. Coweta, OK)" />
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">
+          <input id="nc-color1" placeholder="Primary hex (#1a3828)" />
+          <input id="nc-color2" placeholder="Accent hex (#52b788)" />
+        </div>
+        <button class="add-client-btn" onclick="addNewClient()">+ Add Client</button>
+      </div>
+    </div>
+
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Content Type</div>
+      <div class="content-type-grid" id="contentTypeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const clients = [
+  { name: "Blake Mason", market: "Coweta, OK", brand: { primary: "#1a3828", accent: "#52b788", secondary: "#f4a261", text: "#ffffff", headFont: "DM Sans", bodyFont: "DM Sans" } },
+  { name: "Sara Hoffman", market: "Webb City, MO", brand: { primary: "#1a2050", accent: "#c0a060", secondary: "#e8d8b0", text: "#ffffff", headFont: "Cormorant Garamond", bodyFont: "DM Sans" } },
+];
+
+const contentTypes = [
+  { id: "market", label: "Market Update", color: "#52b788", headline: "Market Update", subtitle: "Here's what's happening right now" },
+  { id: "edu", label: "Educational", color: "#ffd166", headline: "What You Need to Know", subtitle: "The honest breakdown" },
+  { id: "engage", label: "Engagement", color: "#f4a261", headline: "Quick Question:", subtitle: "Drop your answer below 👇" },
+  { id: "social", label: "Social Proof", color: "#90b8f8", headline: "Another Family. Another Home.", subtitle: "Here's how we made it happen" },
+  { id: "leadgen", label: "Lead Gen Hook", color: "#d4a0f0", headline: "Free Guide Inside →", subtitle: "DM me 'GUIDE' for everything you need" },
+  { id: "trust", label: "Personality/Trust", color: "#74d4d4", headline: "Behind the Scenes", subtitle: "This is the job. And I love it." },
+];
+
+const layouts = ["Bold Top", "Center Card", "Split Half", "Minimal", "Quote", "Stat Callout"];
+
+let state = {
+  clientIdx: 0,
+  platform: "instagram",
+  layout: "Bold Top",
+  contentType: "market",
+  headline: "Market Update",
+  subtitle: "Here's what's happening right now",
+  cta: "",
+  photoUrl: null,
+  photoImg: null,
+};
+
+function getCanvas() { return document.getElementById('postCanvas'); }
+function getCtx() { return getCanvas().getContext('2d'); }
+
+function resizeCanvas() {
+  const canvas = getCanvas();
+  if (state.platform === "instagram") { canvas.width = 1080; canvas.height = 1080; }
+  else { canvas.width = 1200; canvas.height = 630; }
+  canvas.style.maxWidth = state.platform === "instagram" ? "420px" : "560px";
+  canvas.style.height = "auto";
+}
+
+function draw() {
+  const canvas = getCanvas();
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const b = clients[state.clientIdx].brand;
+  const ct = contentTypes.find(t => t.id === state.contentType) || contentTypes[0];
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = b.primary;
+  ctx.fillRect(0, 0, w, h);
+
+  if (state.layout === "Bold Top") drawBoldTop(ctx, w, h, b, ct);
+  else if (state.layout === "Center Card") drawCenterCard(ctx, w, h, b, ct);
+  else if (state.layout === "Split Half") drawSplitHalf(ctx, w, h, b, ct);
+  else if (state.layout === "Minimal") drawMinimal(ctx, w, h, b, ct);
+  else if (state.layout === "Quote") drawQuote(ctx, w, h, b, ct);
+  else if (state.layout === "Stat Callout") drawStatCallout(ctx, w, h, b, ct);
+
+  drawAgentFooter(ctx, w, h, b);
+}
+
+function drawAgentFooter(ctx, w, h, b) {
+  const c = clients[state.clientIdx];
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.fillRect(0, h - Math.round(h * 0.12), w, Math.round(h * 0.12));
+  ctx.fillStyle = b.accent;
+  ctx.font = `700 ${Math.round(w * 0.028)}px "DM Sans"`;
+  ctx.fillText(c.name, Math.round(w * 0.05), h - Math.round(h * 0.055));
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.font = `400 ${Math.round(w * 0.02)}px "DM Sans"`;
+  ctx.fillText(c.market + ' · Curbloom', Math.round(w * 0.05), h - Math.round(h * 0.028));
+  // Accent bar
+  ctx.fillStyle = b.accent;
+  ctx.fillRect(0, h - Math.round(h * 0.12), Math.round(w * 0.004), Math.round(h * 0.12));
+}
+
+function drawBoldTop(ctx, w, h, b, ct) {
+  // Photo fills bottom 60%
+  if (state.photoImg) {
+    const ph = Math.round(h * 0.62);
+    const py = Math.round(h * 0.38);
+    const aspect = state.photoImg.width / state.photoImg.height;
+    const drawW = Math.max(w, ph * aspect);
+    const drawH = Math.max(ph, w / aspect);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, py, w, ph);
+    ctx.clip();
+    ctx.drawImage(state.photoImg, (w - drawW) / 2, py + (ph - drawH) / 2, drawW, drawH);
+    ctx.restore();
+    // gradient overlay
+    const grad = ctx.createLinearGradient(0, py, 0, py + ph);
+    grad.addColorStop(0, b.primary + 'cc');
+    grad.addColorStop(1, 'rgba(0,0,0,0.15)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, py, w, ph);
+  }
+  // Type badge
+  ctx.fillStyle = ct.color + '22';
+  ctx.strokeStyle = ct.color + '88';
+  ctx.lineWidth = 2;
+  const bw = Math.round(w * 0.32), bh = Math.round(h * 0.04);
+  roundRect(ctx, Math.round(w * 0.06), Math.round(h * 0.06), bw, bh, bh / 2);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = ct.color;
+  ctx.font = `700 ${Math.round(w * 0.02)}px "DM Sans"`;
+  ctx.textAlign = 'left';
+  ctx.fillText(ct.label.toUpperCase(), Math.round(w * 0.11), Math.round(h * 0.086));
+  // Headline
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 ${Math.round(w * 0.07)}px "DM Sans"`;
+  wrapText(ctx, state.headline, Math.round(w * 0.06), Math.round(h * 0.2), w * 0.88, Math.round(w * 0.08));
+  // Subtitle
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.font = `400 ${Math.round(w * 0.028)}px "DM Sans"`;
+  ctx.fillText(state.subtitle, Math.round(w * 0.06), Math.round(h * 0.34));
+  ctx.textAlign = 'left';
+}
+
+function drawCenterCard(ctx, w, h, b, ct) {
+  if (state.photoImg) {
+    const aspect = state.photoImg.width / state.photoImg.height;
+    const drawW = Math.max(w, h * aspect);
+    const drawH = Math.max(h, w / aspect);
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.drawImage(state.photoImg, (w - drawW) / 2, (h - drawH) / 2, drawW, drawH);
+    ctx.restore();
+  }
+  // Card
+  const cw = Math.round(w * 0.8), ch = Math.round(h * 0.55);
+  const cx = Math.round((w - cw) / 2), cy = Math.round((h - ch) / 2);
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.save(); roundRect(ctx, cx, cy, cw, ch, 20); ctx.fill(); ctx.restore();
+  ctx.strokeStyle = b.accent + '55'; ctx.lineWidth = 2;
+  ctx.save(); roundRect(ctx, cx, cy, cw, ch, 20); ctx.stroke(); ctx.restore();
+  // Content in card
+  ctx.fillStyle = ct.color;
+  ctx.font = `700 ${Math.round(w * 0.022)}px "DM Sans"`;
+  ctx.textAlign = 'center';
+  ctx.fillText(ct.label.toUpperCase(), w / 2, cy + Math.round(ch * 0.2));
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 ${Math.round(w * 0.065)}px "DM Sans"`;
+  wrapText(ctx, state.headline, w / 2, cy + Math.round(ch * 0.42), cw * 0.85, Math.round(w * 0.075), true);
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.font = `400 ${Math.round(w * 0.025)}px "DM Sans"`;
+  ctx.fillText(state.subtitle, w / 2, cy + Math.round(ch * 0.76));
+  ctx.textAlign = 'left';
+}
+
+function drawSplitHalf(ctx, w, h, b, ct) {
+  const splitX = Math.round(w * 0.48);
+  if (state.photoImg) {
+    const ph = h - Math.round(h * 0.12);
+    const pAspect = state.photoImg.width / state.photoImg.height;
+    const drawH = ph, drawW = drawH * pAspect;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(splitX, 0, w - splitX, ph);
+    ctx.clip();
+    ctx.drawImage(state.photoImg, splitX + (w - splitX - drawW) / 2, 0, Math.max(drawW, w - splitX), drawH);
+    const grad = ctx.createLinearGradient(splitX, 0, w, 0);
+    grad.addColorStop(0, b.primary + 'ff');
+    grad.addColorStop(0.3, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad; ctx.fillRect(splitX, 0, w - splitX, ph);
+    ctx.restore();
+  }
+  ctx.fillStyle = ct.color;
+  ctx.font = `700 ${Math.round(w * 0.022)}px "DM Sans"`;
+  ctx.fillText(ct.label.toUpperCase(), Math.round(w * 0.05), Math.round(h * 0.2));
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `800 ${Math.round(w * 0.065)}px "DM Sans"`;
+  wrapText(ctx, state.headline, Math.round(w * 0.05), Math.round(h * 0.35), splitX * 0.88, Math.round(w * 0.075));
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.font = `400 ${Math.round(w * 0.025)}px "DM Sans"`;
+  ctx.fillText(state.subtitle, Math.round(w * 0.05), Math.round(h * 0.52));
+  // Divider line
+  ctx.fillStyle = b.accent;
+  ctx.fillRect(Math.round(w * 0.05), Math.round(h * 0.26), Math.round(w * 0.06), 3);
+}
+
+function drawMinimal(ctx, w, h, b, ct) {
+  if (state.photoImg) {
+    const aspect = state.photoImg.width / state.photoImg.height;
+    const drawW = Math.max(w, h * aspect);
+    const drawH = Math.max(h, w / aspect);
+    ctx.drawImage(state.photoImg, (w - drawW) / 2, (h - drawH) / 2, drawW, drawH);
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, b.primary + 'bb');
+    grad.addColorStop(0.5, b.primary + '44');
+    grad.addColorStop(1, b.primary + 'ee');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+  }
+  ctx.fillStyle = b.accent; ctx.fillRect(Math.round(w * 0.06), Math.round(h * 0.72), Math.round(w * 0.08), 3);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `300 ${Math.round(w * 0.055)}px "DM Sans"`;
+  wrapText(ctx, state.headline, Math.round(w * 0.06), Math.round(h * 0.8), w * 0.85, Math.round(w * 0.062));
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = `400 ${Math.round(w * 0.02)}px "DM Sans"`;
+  ctx.fillText(ct.label.toUpperCase(), Math.round(w * 0.06), Math.round(h * 0.69));
+}
+
+function drawQuote(ctx, w, h, b, ct) {
+  if (state.photoImg) {
+    const aspect = state.photoImg.width / state.photoImg.height;
+    const drawW = Math.max(w, h * aspect);
+    const drawH = Math.max(h, w / aspect);
+    ctx.save(); ctx.globalAlpha = 0.15;
+    ctx.drawImage(state.photoImg, (w - drawW) / 2, (h - drawH) / 2, drawW, drawH);
+    ctx.restore();
+  }
+  // Big quote mark
+  ctx.fillStyle = b.accent + '33';
+  ctx.font = `800 ${Math.round(w * 0.25)}px "DM Sans"`;
+  ctx.textAlign = 'center';
+  ctx.fillText('"', w / 2, Math.round(h * 0.42));
+  // Quote text
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `700 ${Math.round(w * 0.052)}px "DM Sans"`;
+  wrapText(ctx, state.headline, w / 2, Math.round(h * 0.46), w * 0.78, Math.round(w * 0.06), true);
+  ctx.fillStyle = b.accent;
+  ctx.font = `400 ${Math.round(w * 0.025)}px "DM Sans"`;
+  ctx.fillText('— ' + clients[state.clientIdx].name + ' · ' + clients[state.clientIdx].market, w / 2, Math.round(h * 0.65));
+  ctx.textAlign = 'left';
+}
+
+function drawStatCallout(ctx, w, h, b, ct) {
+  if (state.photoImg) {
+    const ph = Math.round(h * 0.5);
+    const aspect = state.photoImg.width / state.photoImg.height;
+    const drawW = Math.max(w, ph * aspect);
+    const drawH = Math.max(ph, w / aspect);
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, w, ph); ctx.clip();
+    ctx.drawImage(state.photoImg, (w - drawW) / 2, (ph - drawH) / 2, drawW, drawH);
+    const grad = ctx.createLinearGradient(0, 0, 0, ph);
+    grad.addColorStop(0.5, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, b.primary + 'ff');
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, w, ph);
+    ctx.restore();
+  }
+  ctx.fillStyle = b.accent;
+  ctx.font = `800 ${Math.round(w * 0.16)}px "DM Sans"`;
+  ctx.textAlign = 'center';
+  ctx.fillText(state.headline.length < 6 ? state.headline : state.headline.split(' ')[0], w / 2, Math.round(h * 0.66));
+  ctx.fillStyle = '#ffffff';
+  ctx.font = `400 ${Math.round(w * 0.032)}px "DM Sans"`;
+  ctx.fillText(state.subtitle, w / 2, Math.round(h * 0.72));
+  ctx.textAlign = 'left';
+}
+
+// Utils
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH, centered = false) {
+  const words = text.split(' ');
+  let line = '';
+  let lineY = y;
+  for (let w of words) {
+    const test = line + (line ? ' ' : '') + w;
+    if (ctx.measureText(test).width > maxW && line) {
+      if (centered) { const m = ctx.measureText(line).width; ctx.fillText(line, x - m / 2, lineY); }
+      else ctx.fillText(line, x, lineY);
+      line = w; lineY += lineH;
+    } else { line = test; }
+  }
+  if (centered) { const m = ctx.measureText(line).width; ctx.fillText(line, x - m / 2, lineY); }
+  else ctx.fillText(line, x, lineY);
+}
+
+// Controls render
+function renderControls() {
+  const c = clients[state.clientIdx];
+  const b = c.brand;
+  document.getElementById('ctrlPanel').innerHTML = `
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Platform</div>
+      <div class="platform-btns">
+        <button class="plat-btn ${state.platform==='instagram'?'active':''}" onclick="setPlatform('instagram')">📷 Instagram<br><span style="font-size:0.6rem;opacity:0.7;">1080 × 1080</span></button>
+        <button class="plat-btn ${state.platform==='facebook'?'active':''}" onclick="setPlatform('facebook')">📘 Facebook<br><span style="font-size:0.6rem;opacity:0.7;">1200 × 630</span></button>
+      </div>
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Layout</div>
+      <div class="layout-grid">${layouts.map(l=>`<button class="layout-btn ${state.layout===l?'active':''}" onclick="setLayout('${l}')">${l}</button>`).join('')}</div>
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Text</div>
+      <label class="ctrl-label">Headline</label>
+      <textarea class="ctrl-textarea" oninput="updateText('headline',this.value)">${state.headline}</textarea>
+      <label class="ctrl-label">Subtitle / Detail</label>
+      <input class="ctrl-input" type="text" value="${state.subtitle}" oninput="updateText('subtitle',this.value)" />
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Photo</div>
+      <div class="photo-upload ${state.photoUrl?'has-image':''}" onclick="document.getElementById('fileInput').click()">
+        ${state.photoUrl ? '✅ Photo loaded — click to change' : '📷 Click to upload a photo'}
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="loadPhoto(this)" />
+      ${state.photoUrl ? `<button style="background:transparent;border:1px solid #1e2838;border-radius:7px;padding:0.4rem;color:#666;font-size:0.7rem;cursor:pointer;width:100%;font-family:inherit;margin-bottom:0.5rem;" onclick="removePhoto()">Remove photo</button>` : ''}
+    </div>
+    <div class="ctrl-section">
+      <div class="ctrl-section-title">Brand Colors</div>
+      <div class="color-row">
+        <div class="color-swatch" style="background:${b.primary}"><input type="color" value="${b.primary}" oninput="setBrandColor('primary',this.value)"></div>
+        <span class="color-label">Primary background</span>
+      </div>
+      <div class="color-row">
+        <div class="color-swatch" style="background:${b.accent}"><input type="color" value="${b.accent}" oninput="setBrandColor('accent',this.value)"></div>
+        <span class="color-label">Accent / highlights</span>
+      </div>
+      <div class="color-row">
+        <div class="color-swatch" style="background:${b.secondary}"><input type="color" value="${b.secondary}" oninput="setBrandColor('secondary',this.value)"></div>
+        <span class="color-label">Secondary</span>
+      </div>
+    </div>
+    <button class="action-btn btn-download" onclick="downloadPost()">⬇ Download PNG</button>
+    <button class="action-btn btn-random" onclick="randomize()">🎲 Randomize Layout</button>`;
+
+  // Client dropdown
+  const sel = document.getElementById('clientSelect');
+  if (sel) {
+    sel.innerHTML = clients.map((c,i)=>`<option value="${i}" ${i===state.clientIdx?'selected':''}>${c.name}</option>`).join('');
+  }
+
+  // Content type grid
+  const ctg = document.getElementById('contentTypeGrid');
+  if (ctg) {
+    ctg.innerHTML = contentTypes.map(ct=>`<button class="ct-btn ${state.contentType===ct.id?'active':''}" onclick="setType('${ct.id}')">${ct.label}</button>`).join('');
+  }
+}
+
+// Actions
+function switchClient(idx) { state.clientIdx = parseInt(idx); renderControls(); draw(); }
+function setPlatform(p) { state.platform = p; resizeCanvas(); renderControls(); draw(); }
+function setType(t) {
+  state.contentType = t;
+  const d = contentTypes.find(ct=>ct.id===t);
+  state.headline = d.headline; state.subtitle = d.subtitle;
+  renderControls(); draw();
+}
+function setLayout(l) { state.layout = l; renderControls(); draw(); }
+function updateText(field, val) { state[field] = val; draw(); }
+function setBrandColor(key, val) { clients[state.clientIdx].brand[key] = val; draw(); }
+function randomize() {
+  state.layout = layouts[Math.floor(Math.random() * layouts.length)];
+  renderControls(); draw();
+}
+function removePhoto() { state.photoUrl = null; state.photoImg = null; renderControls(); draw(); }
+function loadPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    state.photoUrl = e.target.result;
+    const img = new Image();
+    img.onload = () => { state.photoImg = img; renderControls(); draw(); };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function downloadPost() {
+  const canvas = getCanvas();
+  const link = document.createElement('a');
+  const cn = clients[state.clientIdx].name.replace(/\s/g,'_');
+  const ct = state.contentType;
+  link.download = `Curbloom_${cn}_${ct}_${state.platform}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+function addNewClient() {
+  const name = document.getElementById('nc-name').value.trim();
+  if (!name) return;
+  const market = document.getElementById('nc-market').value.trim() || 'Your Market';
+  const c1 = document.getElementById('nc-color1').value.trim() || '#1a3828';
+  const c2 = document.getElementById('nc-color2').value.trim() || '#52b788';
+  clients.push({ name, market, brand: { primary: c1, accent: c2, secondary: '#f4a261', text: '#ffffff', headFont: 'DM Sans', bodyFont: 'DM Sans' } });
+  state.clientIdx = clients.length - 1;
+  document.getElementById('nc-name').value = '';
+  document.getElementById('nc-market').value = '';
+  document.getElementById('nc-color1').value = '';
+  document.getElementById('nc-color2').value = '';
+  renderControls();
+  draw();
+}
+
+// Init
+resizeCanvas();
+renderControls();
+draw();
+window.addEventListener('resize', () => { resizeCanvas(); draw(); });
+</script>
+</body>
+</html>
