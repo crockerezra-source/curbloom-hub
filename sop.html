@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom — Monthly Delivery SOP</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0b0f14;
+  --bg1:      #0f1419;
+  --bg2:      #141b24;
+  --bg3:      #1a2535;
+  --bg4:      #1e2d3d;
+  --border:   #1e2d3d;
+  --green:    #2d6a4f;
+  --green-b:  #52b788;
+  --green-l:  #74c69d;
+  --green-p:  #b7e4c7;
+  --orange:   #ff914d;
+  --orange-d: #c4693a;
+  --gold:     #f4c842;
+  --gold-d:   #a8860a;
+  --purple:   #c084fc;
+  --text:     #e8eef4;
+  --muted:    #8a9bb0;
+  --dim:      #3a4a5a;
+}
+
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── HEADER ── */
+.header {
+  background: var(--bg1);
+  border-bottom: 2px solid var(--orange);
+  padding: 1rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: var(--orange); letter-spacing: 2px; }
+.logo-sub { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+.back-link { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 5px; transition: all 0.15s; }
+.back-link:hover { color: var(--green-b); border-color: var(--green); }
+
+/* ── LAYOUT ── */
+.app { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 58px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  padding: 1.2rem;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+
+.sidebar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange);
+  margin-bottom: 0.5rem;
+}
+
+/* Client selector */
+.client-list { display: flex; flex-direction: column; gap: 0.4rem; }
+.client-btn {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.7rem 0.9rem; cursor: pointer; transition: all 0.15s; text-align: left;
+  position: relative;
+}
+.client-btn:hover { border-color: var(--orange); }
+.client-btn.active { border-color: var(--orange); background: #1a1208; }
+.client-btn::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: transparent; border-radius: 8px 0 0 8px; transition: background 0.15s;
+}
+.client-btn.active::before { background: var(--orange); }
+.client-name { font-weight: 700; font-size: 0.85rem; color: var(--text); }
+.client-tier { font-size: 0.68rem; margin-top: 2px; }
+.tier-founder { color: var(--green-b); }
+.tier-growth  { color: var(--gold); }
+.tier-premium { color: var(--purple); }
+.client-market { font-size: 0.65rem; color: var(--muted); margin-top: 1px; }
+
+.add-client-btn {
+  background: transparent; border: 1px dashed var(--orange-d); border-radius: 8px;
+  padding: 0.6rem; color: var(--orange); font-size: 0.75rem; cursor: pointer;
+  transition: all 0.15s; font-family: 'DM Sans', sans-serif; width: 100%;
+}
+.add-client-btn:hover { background: #1a0e04; border-color: var(--orange); }
+
+/* Progress */
+.progress-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+.progress-title { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem; }
+.progress-bar-wrap { background: var(--bg3); border-radius: 4px; height: 6px; margin-bottom: 0.5rem; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--gold)); border-radius: 4px; transition: width 0.4s ease; }
+.progress-nums { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+.progress-pct { font-size: 1.4rem; font-weight: 800; color: var(--orange); font-family: 'Syne', sans-serif; }
+
+/* Time estimate */
+.time-block { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; }
+.time-row { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0; border-bottom: 1px solid var(--dim); }
+.time-row:last-child { border-bottom: none; }
+.time-label { font-size: 0.72rem; color: var(--muted); }
+.time-val { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--text); }
+.time-total { color: var(--orange); font-weight: 700; }
+
+/* Month selector */
+.month-row { display: flex; gap: 0.5rem; align-items: center; }
+.month-row select {
+  flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.45rem 0.6rem; color: var(--text); font-size: 0.78rem;
+  font-family: 'DM Sans', sans-serif;
+}
+.month-row select:focus { outline: none; border-color: var(--orange); }
+
+/* Reset btn */
+.reset-btn {
+  background: transparent; border: 1px solid var(--dim); border-radius: 6px;
+  padding: 4px 10px; color: var(--muted); font-size: 0.65rem; cursor: pointer;
+  font-family: 'DM Mono', monospace; transition: all 0.15s;
+}
+.reset-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+/* ── MAIN ── */
+.main { padding: 1.5rem 2rem; overflow-y: auto; }
+
+/* Phase headers */
+.phase {
+  margin-bottom: 2rem;
+}
+.phase-header {
+  display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.85rem;
+}
+.phase-num {
+  font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 1.5px;
+  color: var(--muted); background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 7px;
+}
+.phase-title {
+  font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text);
+}
+.phase-time {
+  font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted);
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 4px;
+  padding: 2px 8px; margin-left: auto;
+}
+.phase-line { flex: 1; height: 1px; background: var(--border); }
+
+/* Step cards */
+.steps { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.step {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 0.75rem;
+  align-items: start;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+}
+.step:hover { border-color: var(--orange-d); }
+.step.done { background: #0e1a0e; border-color: var(--green); opacity: 0.75; }
+.step.done:hover { opacity: 1; }
+.step.tier-locked { opacity: 0.35; cursor: default; pointer-events: none; }
+
+/* Checkbox */
+.step-check {
+  width: 22px; height: 22px; border-radius: 6px;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all 0.18s; margin-top: 1px;
+  background: var(--bg3);
+}
+.step.done .step-check {
+  background: var(--green); border-color: var(--green-b);
+}
+.step-check-icon { font-size: 0.7rem; display: none; }
+.step.done .step-check-icon { display: block; }
+
+/* Step content */
+.step-title { font-size: 0.84rem; font-weight: 600; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
+.step.done .step-title { text-decoration: line-through; color: var(--muted); }
+.step-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.55; }
+.step-tool {
+  font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.5px;
+  padding: 2px 7px; border-radius: 10px; white-space: nowrap; margin-top: 6px;
+  display: inline-block;
+}
+.tool-c4      { background: #0d2e1c; color: var(--green-b); border: 1px solid var(--green); }
+.tool-designer { background: #1a1208; color: var(--gold); border: 1px solid var(--gold-d); }
+.tool-report  { background: #0f1a2e; color: #60a5fa; border: 1px solid #1a3a6a; }
+.tool-email   { background: #1a0e2e; color: var(--purple); border: 1px solid #4a1a7a; }
+.tool-canva   { background: #2a1a0a; color: var(--orange); border: 1px solid var(--orange-d); }
+.tool-manual  { background: var(--bg3); color: var(--muted); border: 1px solid var(--dim); }
+
+/* Tier badge on step */
+.step-tier-badge {
+  font-family: 'DM Mono', monospace; font-size: 0.56rem; padding: 2px 6px;
+  border-radius: 8px; white-space: nowrap; align-self: start;
+}
+.badge-all      { background: var(--bg3); color: var(--muted); border: 1px solid var(--dim); }
+.badge-growth   { background: #1a1600; color: var(--gold); border: 1px solid var(--gold-d); }
+.badge-premium  { background: #1a0e2e; color: var(--purple); border: 1px solid #4a1a7a; }
+
+/* Tier locked notice */
+.locked-notice {
+  font-size: 0.65rem; color: var(--dim); font-style: italic; margin-top: 3px;
+}
+
+/* ── DELIVERY GUIDE BANNER ── */
+.delivery-banner {
+  background: #1a1208;
+  border: 1px solid var(--orange-d);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  display: flex; gap: 0.75rem; align-items: flex-start;
+}
+.delivery-icon { font-size: 1.2rem; flex-shrink: 0; }
+.delivery-text { font-size: 0.76rem; color: var(--orange); line-height: 1.65; }
+.delivery-text strong { color: #ffc080; }
+.delivery-text a { color: var(--gold); text-decoration: underline; cursor: pointer; }
+
+/* ── ADD CLIENT FORM ── */
+.form-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; display: none;
+}
+.form-overlay.open { display: flex; }
+.form-card {
+  background: var(--bg1); border: 1px solid var(--orange-d); border-radius: 14px;
+  padding: 1.5rem; width: 440px; max-width: 95vw;
+}
+.form-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--orange); margin-bottom: 1.2rem; }
+.fg { margin-bottom: 0.75rem; }
+.fg label { display: block; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+.fg input, .fg select {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 7px;
+  padding: 0.5rem 0.75rem; color: var(--text); font-size: 0.82rem;
+  font-family: 'DM Sans', sans-serif; transition: border-color 0.15s;
+}
+.fg input:focus, .fg select:focus { outline: none; border-color: var(--orange); }
+.form-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.btn-primary {
+  background: var(--orange); border: none; border-radius: 7px; padding: 0.6rem 1.4rem;
+  color: white; font-weight: 700; font-size: 0.82rem; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.btn-primary:hover { background: var(--orange-d); }
+.btn-cancel {
+  background: transparent; border: 1px solid var(--border); border-radius: 7px;
+  padding: 0.6rem 1rem; color: var(--muted); font-size: 0.82rem; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 60vh; gap: 0.75rem; color: var(--dim); text-align: center;
+}
+.empty-state .icon { font-size: 2.5rem; }
+.empty-state p { font-size: 0.8rem; color: var(--muted); max-width: 260px; line-height: 1.6; }
+
+/* ── COMPLETION BANNER ── */
+.complete-banner {
+  background: #0d2e1c; border: 1px solid var(--green-b); border-radius: 10px;
+  padding: 1rem 1.2rem; margin-bottom: 1.5rem; display: none;
+  align-items: center; gap: 0.75rem;
+}
+.complete-banner.show { display: flex; }
+.complete-text { font-size: 0.82rem; color: var(--green-p); line-height: 1.6; }
+.complete-text strong { color: #fff; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">CURBLOOM</div>
+    <div class="logo-sub">Monthly Delivery SOP</div>
+  </div>
+  <a href="index.html" class="back-link">← Playbook</a>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div>
+      <div class="sidebar-label">Clients</div>
+      <div class="client-list" id="clientList"></div>
+      <button class="add-client-btn" onclick="openForm()" style="margin-top:0.5rem">+ Add Client</button>
+    </div>
+
+    <div>
+      <div class="sidebar-label">Month</div>
+      <div class="month-row">
+        <select id="monthSelect" onchange="render()"></select>
+        <button class="reset-btn" onclick="resetChecklist()" title="Reset checklist">↺</button>
+      </div>
+    </div>
+
+    <div class="progress-block" id="progressBlock" style="display:none">
+      <div class="progress-title">This Month</div>
+      <div class="progress-pct" id="progressPct">0%</div>
+      <div class="progress-bar-wrap" style="margin-top:0.5rem">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-nums">
+        <span id="progressDone">0 done</span>
+        <span id="progressTotal">0 steps</span>
+      </div>
+    </div>
+
+    <div class="time-block" id="timeBlock" style="display:none">
+      <div class="progress-title">Time Estimate</div>
+      <div id="timeRows"></div>
+    </div>
+
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="main">
+    <div class="empty-state">
+      <div class="icon">📋</div>
+      <p>Add your first client to start using the Monthly SOP.</p>
+      <button class="btn-primary" onclick="openForm()">Add First Client</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ADD CLIENT FORM -->
+<div class="form-overlay" id="formOverlay">
+  <div class="form-card">
+    <div class="form-title">Add Client</div>
+    <div class="fg">
+      <label>Client Name *</label>
+      <input id="f-name" placeholder="e.g. Sara Hoffman" />
+    </div>
+    <div class="fg">
+      <label>Market / Community</label>
+      <input id="f-market" placeholder="e.g. Webb City · SWMO" />
+    </div>
+    <div class="fg">
+      <label>Tier</label>
+      <select id="f-tier">
+        <option value="founder">Founder — Captions + Calendar</option>
+        <option value="growth">Growth — Captions + Calendar + Graphics</option>
+        <option value="premium">Premium — Full Service + Scheduling + Report</option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" onclick="addClient()">Add Client</button>
+      <button class="btn-cancel" onclick="closeForm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+let clients = JSON.parse(localStorage.getItem('sop_clients') || '[]');
+let activeIdx = clients.length > 0 ? 0 : null;
+
+// State: { clientName+month: { stepId: bool } }
+let checkState = JSON.parse(localStorage.getItem('sop_checks') || '{}');
+
+function saveAll() {
+  localStorage.setItem('sop_clients', JSON.stringify(clients));
+  localStorage.setItem('sop_checks', JSON.stringify(checkState));
+}
+
+// ── MONTHS ──
+function populateMonths() {
+  const sel = document.getElementById('monthSelect');
+  sel.innerHTML = '';
+  const now = new Date();
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const label = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+    const val = `${d.getFullYear()}-${d.getMonth()}`;
+    const opt = document.createElement('option');
+    opt.value = val; opt.textContent = label;
+    if (i === 0) opt.selected = true;
+    sel.appendChild(opt);
+  }
+}
+
+function getMonthKey() {
+  return document.getElementById('monthSelect').value;
+}
+
+function getCheckKey(clientIdx) {
+  return `${clients[clientIdx].name}__${getMonthKey()}`;
+}
+
+// ── SOP DEFINITION ──
+// Each step: { id, phase, title, desc, tool, toolClass, tiers, time (mins) }
+// tiers: ['all'] | ['growth','premium'] | ['premium']
+
+const PHASES = [
+  {
+    num: '01',
+    title: 'Prep — Know What You\'re Delivering',
+    time: '5 min',
+    steps: [
+      {
+        id: 'prep-calendar',
+        title: 'Pull the 30-day content calendar from C4',
+        desc: 'Open C4, select the client, and confirm this month\'s 30-day plan. Screenshot or note any days that need real-world data (market stats, recent closings).',
+        tool: 'C4', toolClass: 'tool-c4',
+        tiers: ['all'], time: 5
+      },
+      {
+        id: 'prep-intel',
+        title: 'Gather real-world intel for Market Update posts',
+        desc: 'Pull 2–3 current stats for the client\'s market: median home price, days on market, inventory. These replace placeholders in Market Update captions. Takes 5 min with Zillow or Realtor.com.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 5
+      },
+    ]
+  },
+  {
+    num: '02',
+    title: 'Captions — Generate & Customize',
+    time: '30 min',
+    steps: [
+      {
+        id: 'cap-generate',
+        title: 'Generate all 30 captions in C4',
+        desc: 'Click each day in C4 and copy the caption. Paste into a Google Doc or Word doc — one caption per section, labeled by day number and platform.',
+        tool: 'C4', toolClass: 'tool-c4',
+        tiers: ['all'], time: 15
+      },
+      {
+        id: 'cap-customize',
+        title: 'Customize the 4 Market Update captions with real stats',
+        desc: 'Find the 4 Market Update days in the doc. Replace the placeholder numbers with the real data you gathered in prep. This is what makes the content feel local and credible.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 10
+      },
+      {
+        id: 'cap-review',
+        title: 'Read every caption out loud — does it sound like the client?',
+        desc: 'Quick gut check. If anything sounds generic, stiff, or wrong for their voice, fix it now. Personality/Trust and Engagement posts are the ones most likely to need a tweak.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 10
+      },
+    ]
+  },
+  {
+    num: '03',
+    title: 'Graphics — Design & Export',
+    time: '60 min',
+    steps: [
+      {
+        id: 'graphics-market',
+        title: 'Design 4 Market Update graphics',
+        desc: 'Use Post Designer or Canva. Bold stat front and center, client brand colors. These are the posts that get saved and shared — make them clean.',
+        tool: 'Post Designer', toolClass: 'tool-designer',
+        tiers: ['growth', 'premium'], time: 20
+      },
+      {
+        id: 'graphics-trust',
+        title: 'Design 4 Personality/Trust graphics',
+        desc: 'Photo-forward. Use Bold Overlay layout. The client\'s face or a behind-the-scenes shot goes here. If no photo, use a strong color background with their hook as the headline.',
+        tool: 'Post Designer', toolClass: 'tool-designer',
+        tiers: ['growth', 'premium'], time: 20
+      },
+      {
+        id: 'graphics-social-proof',
+        title: 'Design 4 Social Proof / Engagement graphics',
+        desc: 'Quote layout for testimonials, Clean Minimal for engagement polls or questions. Keep copy minimal — let the design carry it.',
+        tool: 'Post Designer', toolClass: 'tool-designer',
+        tiers: ['growth', 'premium'], time: 15
+      },
+      {
+        id: 'graphics-lead-gen',
+        title: 'Design remaining Lead Gen + Educational graphics',
+        desc: 'Bold Overlay or Split Half for lead gen hooks. Clean Minimal works well for educational carousels. Export all as PNGs, named by day number.',
+        tool: 'Post Designer', toolClass: 'tool-designer',
+        tiers: ['growth', 'premium'], time: 20
+      },
+    ]
+  },
+  {
+    num: '04',
+    title: 'Calendar — Build the Posting Schedule',
+    time: '15 min',
+    steps: [
+      {
+        id: 'cal-build',
+        title: 'Build the client\'s 30-day posting calendar',
+        desc: 'Create a simple doc or table: Date | Platform | Content Type | Caption (link or paste) | Graphic (attached or linked). This is what you hand to the client — they post from this.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 10
+      },
+      {
+        id: 'cal-dates',
+        title: 'Map the 30 posts to actual calendar dates',
+        desc: 'Day 1 = 1st of the month. Assign each day number to a real date and note the platform. Flag any holidays or events in the client\'s market that might affect timing.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 5
+      },
+    ]
+  },
+  {
+    num: '05',
+    title: 'Scheduling — Premium Only',
+    time: '45 min',
+    steps: [
+      {
+        id: 'schedule-access',
+        title: 'Confirm access to client\'s Meta Business Suite',
+        desc: 'You need either direct login credentials or to be added as a page admin. Confirm this is set up before the first Premium month — don\'t wait until delivery day.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['premium'], time: 5
+      },
+      {
+        id: 'schedule-upload',
+        title: 'Upload all graphics to Meta Business Suite',
+        desc: 'Upload PNGs to the Media Library before scheduling. Label them clearly. Confirm each image renders correctly at both Instagram square and Facebook landscape sizes.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['premium'], time: 15
+      },
+      {
+        id: 'schedule-posts',
+        title: 'Schedule all 30 posts',
+        desc: 'Pair each caption with its graphic and schedule at the correct date/time. Best posting times: Instagram 8–10am or 6–8pm, Facebook 1–3pm. Stagger platforms by 1–2 hours.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['premium'], time: 25
+      },
+    ]
+  },
+  {
+    num: '06',
+    title: 'Report — Pull the Numbers',
+    time: '10 min',
+    steps: [
+      {
+        id: 'report-pull',
+        title: 'Pull last month\'s performance metrics',
+        desc: 'From Meta Business Suite or the client\'s Insights: follower count, reach, profile visits, top post. Log them in the Reporting Dashboard.',
+        tool: 'Reports', toolClass: 'tool-report',
+        tiers: ['premium'], time: 5
+      },
+      {
+        id: 'report-generate',
+        title: 'Generate the monthly PDF report',
+        desc: 'Open the Reporting Dashboard, enter the metrics, click Generate PDF. This is the client-facing document that proves the value of the service.',
+        tool: 'Reports', toolClass: 'tool-report',
+        tiers: ['premium'], time: 5
+      },
+    ]
+  },
+  {
+    num: '07',
+    title: 'Delivery — Send Everything to the Client',
+    time: '10 min',
+    steps: [
+      {
+        id: 'deliver-package',
+        title: 'Package all deliverables',
+        desc: 'Founder: captions doc + content calendar. Growth: captions doc + calendar + graphics folder. Premium: everything is already scheduled — just send the report and a summary note.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 5
+      },
+      {
+        id: 'deliver-send',
+        title: 'Send delivery email to client',
+        desc: 'Keep it short: "Here\'s your content for [Month]. 30 posts, ready to go. [Quick note on anything notable this month.] Let me know if you have any questions." Attach or link everything.',
+        tool: 'Email', toolClass: 'tool-email',
+        tiers: ['all'], time: 5
+      },
+      {
+        id: 'deliver-confirm',
+        title: 'Confirm client received and has no questions',
+        desc: 'Follow up once if no response in 48 hours. Log the delivery date. This is your proof of delivery and the start of the clock for next month.',
+        tool: 'Manual', toolClass: 'tool-manual',
+        tiers: ['all'], time: 0
+      },
+    ]
+  },
+];
+
+// ── RENDER ──
+function render() {
+  if (activeIdx === null || clients.length === 0) {
+    document.getElementById('main').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📋</div>
+        <p>Add your first client to start using the Monthly SOP.</p>
+        <button class="btn-primary" onclick="openForm()">Add First Client</button>
+      </div>`;
+    document.getElementById('progressBlock').style.display = 'none';
+    document.getElementById('timeBlock').style.display = 'none';
+    return;
+  }
+
+  const client = clients[activeIdx];
+  const tier   = client.tier;
+  const key    = getCheckKey(activeIdx);
+  if (!checkState[key]) checkState[key] = {};
+  const checks = checkState[key];
+
+  // Build visible steps for this tier
+  const visibleSteps = [];
+  PHASES.forEach(phase => {
+    phase.steps.forEach(step => {
+      const applicable = step.tiers.includes('all') ||
+        (tier === 'growth'  && (step.tiers.includes('growth')  || step.tiers.includes('premium') === false && step.tiers.includes('all') === false ? false : step.tiers.includes('growth'))) ||
+        (tier === 'premium' && step.tiers.includes('premium')) ||
+        step.tiers.includes(tier);
+      if (applicable || step.tiers.includes('all')) visibleSteps.push(step);
+    });
+  });
+
+  // Count
+  const totalSteps = visibleSteps.length;
+  const doneSteps  = visibleSteps.filter(s => checks[s.id]).length;
+  const pct        = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
+
+  // Update sidebar
+  document.getElementById('progressBlock').style.display = 'block';
+  document.getElementById('timeBlock').style.display = 'block';
+  document.getElementById('progressPct').textContent  = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressDone').textContent = doneSteps + ' done';
+  document.getElementById('progressTotal').textContent = totalSteps + ' steps';
+
+  // Time rows
+  const tierTimes = {
+    founder: [
+      { label: 'Prep', val: '10 min' },
+      { label: 'Captions', val: '30 min' },
+      { label: 'Calendar', val: '15 min' },
+      { label: 'Delivery', val: '10 min' },
+      { label: 'Total', val: '~1 hr', cls: 'time-total' },
+    ],
+    growth: [
+      { label: 'Prep', val: '10 min' },
+      { label: 'Captions', val: '30 min' },
+      { label: 'Graphics', val: '60 min' },
+      { label: 'Calendar', val: '15 min' },
+      { label: 'Delivery', val: '10 min' },
+      { label: 'Total', val: '~2 hrs', cls: 'time-total' },
+    ],
+    premium: [
+      { label: 'Prep', val: '10 min' },
+      { label: 'Captions', val: '30 min' },
+      { label: 'Graphics', val: '60 min' },
+      { label: 'Calendar', val: '15 min' },
+      { label: 'Scheduling', val: '45 min' },
+      { label: 'Report', val: '10 min' },
+      { label: 'Delivery', val: '10 min' },
+      { label: 'Total', val: '~3 hrs', cls: 'time-total' },
+    ],
+  };
+
+  document.getElementById('timeRows').innerHTML = (tierTimes[tier] || tierTimes.founder)
+    .map(r => `<div class="time-row"><span class="time-label">${r.label}</span><span class="time-val ${r.cls||''}">${r.val}</span></div>`)
+    .join('');
+
+  // Build main content
+  const allDone = doneSteps === totalSteps && totalSteps > 0;
+
+  let html = `
+    <div class="delivery-banner">
+      <div class="delivery-icon">💡</div>
+      <div class="delivery-text">
+        <strong>Delivery method TBD.</strong> For now: email a Google Drive folder link with all files organized by client name and month.
+        Create one folder per client: <strong>${client.name.replace(/\s/g,'_')}_[Month]</strong> → Captions.docx, Calendar.pdf${tier !== 'founder' ? ', Graphics/' : ''}${tier === 'premium' ? ', Report.pdf' : ''}.
+        Once you have 3+ clients, revisit whether a portal or shared Drive makes more sense.
+      </div>
+    </div>
+
+    <div class="complete-banner ${allDone ? 'show' : ''}">
+      <div style="font-size:1.4rem">✅</div>
+      <div class="complete-text"><strong>${client.name} — ${getMonthLabel()} is done.</strong> All ${totalSteps} steps complete. Ready to deliver.</div>
+    </div>
+  `;
+
+  PHASES.forEach(phase => {
+    // Determine if any step in this phase applies to this tier
+    const phaseSteps = phase.steps.filter(s => stepApplies(s, tier));
+    if (phaseSteps.length === 0) return;
+
+    html += `
+      <div class="phase">
+        <div class="phase-header">
+          <div class="phase-num">PHASE ${phase.num}</div>
+          <div class="phase-title">${phase.title}</div>
+          <div class="phase-line"></div>
+          <div class="phase-time">${phase.time}</div>
+        </div>
+        <div class="steps">
+    `;
+
+    phase.steps.forEach(step => {
+      const applies  = stepApplies(step, tier);
+      const locked   = !applies;
+      const done     = checks[step.id] || false;
+      const tierBadge = step.tiers.includes('all')
+        ? '<span class="step-tier-badge badge-all">All tiers</span>'
+        : step.tiers.includes('premium') && !step.tiers.includes('growth')
+          ? '<span class="step-tier-badge badge-premium">Premium</span>'
+          : '<span class="step-tier-badge badge-growth">Growth+</span>';
+
+      html += `
+        <div class="step ${done ? 'done' : ''} ${locked ? 'tier-locked' : ''}" onclick="${locked ? '' : `toggleStep('${step.id}')`}">
+          <div class="step-check">
+            <span class="step-check-icon">✓</span>
+          </div>
+          <div>
+            <div class="step-title">${step.title}</div>
+            <div class="step-desc">${step.desc}</div>
+            <span class="step-tool ${step.toolClass}">${step.tool}</span>
+            ${locked ? `<div class="locked-notice">Not included in ${tier.charAt(0).toUpperCase()+tier.slice(1)} tier</div>` : ''}
+          </div>
+          ${tierBadge}
+        </div>
+      `;
+    });
+
+    html += `</div></div>`;
+  });
+
+  document.getElementById('main').innerHTML = html;
+}
+
+function stepApplies(step, tier) {
+  if (step.tiers.includes('all')) return true;
+  if (tier === 'premium') return true;
+  if (tier === 'growth' && step.tiers.includes('growth')) return true;
+  return false;
+}
+
+function getMonthLabel() {
+  const sel = document.getElementById('monthSelect');
+  return sel.options[sel.selectedIndex]?.text || '';
+}
+
+function toggleStep(stepId) {
+  if (activeIdx === null) return;
+  const key = getCheckKey(activeIdx);
+  if (!checkState[key]) checkState[key] = {};
+  checkState[key][stepId] = !checkState[key][stepId];
+  saveAll();
+  render();
+}
+
+function resetChecklist() {
+  if (activeIdx === null) return;
+  if (!confirm('Reset all checkboxes for this client this month?')) return;
+  const key = getCheckKey(activeIdx);
+  checkState[key] = {};
+  saveAll();
+  render();
+}
+
+// ── SIDEBAR ──
+function renderSidebar() {
+  const tierLabel = { founder: 'Founder', growth: 'Growth', premium: 'Premium' };
+  const tierClass = { founder: 'tier-founder', growth: 'tier-growth', premium: 'tier-premium' };
+
+  document.getElementById('clientList').innerHTML = clients.map((c, i) => `
+    <div class="client-btn ${i === activeIdx ? 'active' : ''}" onclick="selectClient(${i})">
+      <div class="client-name">${c.name}</div>
+      <div class="client-tier ${tierClass[c.tier]}">${tierLabel[c.tier]}</div>
+      <div class="client-market">${c.market || ''}</div>
+    </div>
+  `).join('');
+}
+
+function selectClient(idx) {
+  activeIdx = idx;
+  renderSidebar();
+  render();
+}
+
+// ── FORM ──
+function openForm() { document.getElementById('formOverlay').classList.add('open'); document.getElementById('f-name').focus(); }
+function closeForm() { document.getElementById('formOverlay').classList.remove('open'); }
+
+function addClient() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Client name required.'); return; }
+  clients.push({
+    name,
+    market: document.getElementById('f-market').value.trim(),
+    tier:   document.getElementById('f-tier').value,
+  });
+  activeIdx = clients.length - 1;
+  saveAll();
+  closeForm();
+  renderSidebar();
+  render();
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-market').value = '';
+}
+
+// Preload Sara if no clients
+if (clients.length === 0) {
+  clients.push({ name: 'Sara Hoffman', market: 'Webb City · SWMO', tier: 'growth' });
+  clients.push({ name: 'Emma', market: 'Lennar Sales Pro', tier: 'founder' });
+  saveAll();
+  activeIdx = 0;
+}
+
+populateMonths();
+renderSidebar();
+render();
+</script>
+</body>
+</html>
