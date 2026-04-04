@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom Post Designer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0b0f14;
+  --bg1: #0f1419;
+  --bg2: #141b24;
+  --bg3: #1a2535;
+  --border: #1e2d3d;
+  --green: #2d6a4f;
+  --green-b: #52b788;
+  --green-l: #74c69d;
+  --green-p: #b7e4c7;
+  --orange: #ff914d;
+  --text: #e8eef4;
+  --muted: #8a9bb0;
+  --dim: #4a5568;
+}
+
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── HEADER ── */
+.header {
+  background: var(--bg1);
+  border-bottom: 2px solid var(--green);
+  padding: 0.9rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { font-family: 'DM Mono', monospace; font-size: 0.75rem; font-weight: 500; color: var(--green-b); letter-spacing: 3px; }
+.logo span { color: var(--muted); }
+.back-link { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); text-decoration: none; letter-spacing: 1px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 5px; transition: all 0.15s; }
+.back-link:hover { color: var(--green-b); border-color: var(--green); }
+
+/* ── APP LAYOUT ── */
+.app { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 52px); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.sidebar-inner { padding: 1.2rem; flex: 1; }
+
+.ctrl-section { margin-bottom: 1.4rem; }
+.ctrl-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--green-b); margin-bottom: 0.65rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.ctrl-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.fg label { display: block; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+.fg + .fg { margin-top: 0.65rem; }
+.fg input, .fg textarea, .fg select {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.5rem 0.7rem; color: var(--text);
+  font-size: 0.8rem; font-family: 'DM Sans', sans-serif; transition: border-color 0.15s;
+}
+.fg input:focus, .fg textarea:focus, .fg select:focus { outline: none; border-color: var(--green-b); }
+.fg textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+/* Platform toggle */
+.platform-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.plat-btn {
+  padding: 0.5rem; border: 1px solid var(--border); border-radius: 7px;
+  background: var(--bg3); color: var(--muted); font-size: 0.72rem;
+  cursor: pointer; transition: all 0.15s; text-align: center; font-family: 'DM Sans', sans-serif;
+}
+.plat-btn.active { background: var(--bg2); border-color: var(--green-b); color: var(--green-l); font-weight: 700; }
+.plat-btn:hover:not(.active) { border-color: var(--green); color: var(--green-l); }
+
+/* Layout chips */
+.layout-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.4rem; }
+.layout-chip {
+  padding: 0.5rem 0.3rem; border: 1px solid var(--border); border-radius: 7px;
+  background: var(--bg3); color: var(--muted); font-size: 0.62rem;
+  cursor: pointer; transition: all 0.15s; text-align: center; font-family: 'DM Mono', monospace;
+  letter-spacing: 0.3px; line-height: 1.4;
+}
+.layout-chip.active { background: var(--bg2); border-color: var(--green-b); color: var(--green-l); font-weight: 500; }
+.layout-chip:hover:not(.active) { border-color: var(--green); color: var(--green-l); }
+
+/* Photo upload */
+.photo-upload-area {
+  border: 2px dashed var(--border); border-radius: 8px; padding: 1rem;
+  text-align: center; cursor: pointer; transition: all 0.15s; background: var(--bg3);
+}
+.photo-upload-area:hover { border-color: var(--green-b); }
+.photo-upload-area.has-photo { border-color: var(--green); background: var(--bg2); }
+.photo-upload-text { font-size: 0.72rem; color: var(--muted); margin-top: 0.4rem; }
+.photo-upload-text span { color: var(--green-b); cursor: pointer; }
+.remove-photo { font-size: 0.65rem; color: #ef4444; cursor: pointer; margin-top: 0.4rem; display: none; }
+.remove-photo.show { display: block; }
+
+/* Export btn */
+.export-btn {
+  margin: 0 1.2rem 1.2rem;
+  background: linear-gradient(135deg, var(--green), var(--green-b));
+  border: none; border-radius: 8px; padding: 0.75rem;
+  color: white; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; letter-spacing: 1px; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif; width: calc(100% - 2.4rem);
+}
+.export-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(82,183,136,0.3); }
+
+/* ── CANVAS AREA ── */
+.canvas-area {
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem; overflow: auto;
+}
+.canvas-wrap {
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+canvas { display: block; }
+
+/* Size label */
+.size-label {
+  position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
+  font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--dim);
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">CURBLOOM <span>/ POST DESIGNER</span></div>
+  <a href="index.html" class="back-link">← PLAYBOOK</a>
+</div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-inner">
+
+      <!-- CLIENT -->
+      <div class="ctrl-section">
+        <div class="ctrl-title">Client</div>
+        <div class="fg">
+          <select id="clientSelect" onchange="onClientChange()">
+            <option value="0">Sara Hoffman — Webb City / SWMO</option>
+            <option value="1">Emma — Lennar Sales Pro</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PLATFORM -->
+      <div class="ctrl-section">
+        <div class="ctrl-title">Platform</div>
+        <div class="platform-row">
+          <div class="plat-btn active" id="btn-ig" onclick="setPlatform('instagram')">📸 Instagram<br><span style="font-size:0.6rem;opacity:0.6">1080 × 1080</span></div>
+          <div class="plat-btn" id="btn-fb" onclick="setPlatform('facebook')">📘 Facebook<br><span style="font-size:0.6rem;opacity:0.6">1200 × 630</span></div>
+        </div>
+      </div>
+
+      <!-- LAYOUT -->
+      <div class="ctrl-section">
+        <div class="ctrl-title">Layout</div>
+        <div class="layout-grid">
+          <div class="layout-chip active" id="chip-bold-overlay" onclick="setLayout('bold-overlay')">Bold<br>Overlay</div>
+          <div class="layout-chip" id="chip-data-drop" onclick="setLayout('data-drop')">Data<br>Drop</div>
+          <div class="layout-chip" id="chip-split" onclick="setLayout('split')">Split<br>Half</div>
+          <div class="layout-chip" id="chip-quote" onclick="setLayout('quote')">Big<br>Quote</div>
+          <div class="layout-chip" id="chip-before-after" onclick="setLayout('before-after')">Before<br>After</div>
+          <div class="layout-chip" id="chip-minimal" onclick="setLayout('minimal')">Clean<br>Minimal</div>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="ctrl-section">
+        <div class="ctrl-title">Content</div>
+        <div class="fg">
+          <label>Content Type</label>
+          <select id="contentType" onchange="onContentTypeChange()">
+            <option value="market">Market Update</option>
+            <option value="educational">Educational</option>
+            <option value="engagement">Engagement</option>
+            <option value="social-proof">Social Proof</option>
+            <option value="lead-gen">Lead Gen Hook</option>
+            <option value="trust">Personality / Trust</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Headline</label>
+          <textarea id="txtHeadline" oninput="render()" rows="3">What's happening in Webb City right now</textarea>
+        </div>
+        <div class="fg">
+          <label>Subtext / Stat</label>
+          <input id="txtSub" oninput="render()" value="Your monthly market snapshot" />
+        </div>
+        <div class="fg">
+          <label>Agent Name</label>
+          <input id="txtAgent" oninput="render()" value="Sara Hoffman" />
+        </div>
+        <div class="fg">
+          <label>Agent Title</label>
+          <input id="txtTitle" oninput="render()" value="Realtor · Realty One Group Ovation" />
+        </div>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="ctrl-section">
+        <div class="ctrl-title">Photo</div>
+        <div class="photo-upload-area" id="dropZone" onclick="document.getElementById('photoInput').click()">
+          <div style="font-size:1.5rem;">📷</div>
+          <div class="photo-upload-text">Click to upload<br><span>or drag & drop</span></div>
+        </div>
+        <div class="remove-photo" id="removePhoto" onclick="removePhoto()">✕ Remove photo</div>
+        <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="loadPhoto(event)" />
+      </div>
+
+    </div>
+
+    <button class="export-btn" onclick="exportPNG()">⬇ Export PNG</button>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-area">
+    <div class="canvas-wrap">
+      <canvas id="postCanvas"></canvas>
+      <div class="size-label" id="sizeLabel">1080 × 1080px · Instagram</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── CLIENTS ──
+const clients = [
+  {
+    name: "Sara Hoffman",
+    title: "Realtor · Realty One Group Ovation",
+    market: "Webb City · SWMO",
+    primary: "#1a2744",
+    secondary: "#ffffff",
+    accent: "#c9a84c",
+    accentDark: "#8a6820",
+    bg: "#0d1628",
+  },
+  {
+    name: "Emma",
+    title: "New Home Sales Consultant · Lennar",
+    market: "Your Market",
+    primary: "#1a3a2a",
+    secondary: "#ffffff",
+    accent: "#52b788",
+    accentDark: "#2d6a4f",
+    bg: "#0a1a12",
+  }
+];
+
+let state = {
+  clientIdx: 0,
+  platform: "instagram",
+  layout: "bold-overlay",
+  headline: "What's happening in Webb City right now",
+  sub: "Your monthly market snapshot",
+  agent: "Sara Hoffman",
+  agentTitle: "Realtor · Realty One Group Ovation",
+  photo: null,
+};
+
+const canvas = document.getElementById('postCanvas');
+const ctx = canvas.getContext('2d');
+
+function getSize() {
+  return state.platform === 'instagram' ? { w: 1080, h: 1080 } : { w: 1200, h: 630 };
+}
+
+function getScale() {
+  const size = getSize();
+  const maxW = Math.min(window.innerWidth - 380, 600);
+  const maxH = window.innerHeight - 120;
+  return Math.min(maxW / size.w, maxH / size.h, 0.56);
+}
+
+function resizeCanvas() {
+  const { w, h } = getSize();
+  const scale = getScale();
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = (w * scale) + 'px';
+  canvas.style.height = (h * scale) + 'px';
+  document.getElementById('sizeLabel').textContent = `${w} × ${h}px · ${state.platform === 'instagram' ? 'Instagram' : 'Facebook'}`;
+}
+
+// ── CONTENT TYPE DEFAULTS ──
+const contentDefaults = {
+  market: {
+    headline: (c) => `What's happening in ${c.market} right now`,
+    sub: 'Your monthly market snapshot',
+    layout: 'data-drop',
+  },
+  educational: {
+    headline: (c) => `3 things nobody tells you about buying in ${c.market}`,
+    sub: 'The honest breakdown — save this',
+    layout: 'minimal',
+  },
+  engagement: {
+    headline: (c) => `Quick question for ${c.market} families`,
+    sub: 'Drop your answer in the comments',
+    layout: 'minimal',
+  },
+  'social-proof': {
+    headline: (c) => `Another family just found their home in ${c.market}`,
+    sub: 'Here\'s how it happened',
+    layout: 'quote',
+  },
+  'lead-gen': {
+    headline: (c) => `Thinking about buying in ${c.market}? Read this first.`,
+    sub: 'DM me GUIDE — free, no pressure',
+    layout: 'bold-overlay',
+  },
+  trust: {
+    headline: (c) => `Behind the scenes`,
+    sub: 'A week in the life',
+    layout: 'bold-overlay',
+  },
+};
+
+function onContentTypeChange() {
+  const type = document.getElementById('contentType').value;
+  const c = clients[state.clientIdx];
+  const defaults = contentDefaults[type];
+  if (!defaults) return;
+
+  const headline = typeof defaults.headline === 'function' ? defaults.headline(c) : defaults.headline;
+  document.getElementById('txtHeadline').value = headline;
+  document.getElementById('txtSub').value = defaults.sub;
+  state.headline = headline;
+  state.sub = defaults.sub;
+
+  // Suggest the best layout for this content type
+  setLayout(defaults.layout);
+  render();
+}
+
+
+function onClientChange() {
+  state.clientIdx = parseInt(document.getElementById('clientSelect').value);
+  const c = clients[state.clientIdx];
+  document.getElementById('txtAgent').value = c.name;
+  document.getElementById('txtTitle').value = c.title;
+  state.agent = c.name;
+  state.agentTitle = c.title;
+  render();
+}
+
+function setPlatform(p) {
+  state.platform = p;
+  document.getElementById('btn-ig').className = 'plat-btn' + (p === 'instagram' ? ' active' : '');
+  document.getElementById('btn-fb').className = 'plat-btn' + (p === 'facebook' ? ' active' : '');
+  resizeCanvas();
+  render();
+}
+
+function setLayout(l) {
+  state.layout = l;
+  document.querySelectorAll('.layout-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('chip-' + l).classList.add('active');
+  render();
+}
+
+function loadPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const img = new Image();
+  img.onload = () => { state.photo = img; document.getElementById('dropZone').classList.add('has-photo'); document.getElementById('removePhoto').classList.add('show'); render(); };
+  img.src = URL.createObjectURL(file);
+}
+
+function removePhoto() {
+  state.photo = null;
+  document.getElementById('dropZone').classList.remove('has-photo');
+  document.getElementById('removePhoto').classList.remove('show');
+  document.getElementById('photoInput').value = '';
+  render();
+}
+
+// Drag drop
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#52b788'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = ''; });
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.style.borderColor = '';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) { loadPhoto({ target: { files: [file] } }); }
+});
+
+document.getElementById('txtHeadline').addEventListener('input', e => { state.headline = e.target.value; render(); });
+document.getElementById('txtSub').addEventListener('input', e => { state.sub = e.target.value; render(); });
+document.getElementById('txtAgent').addEventListener('input', e => { state.agent = e.target.value; render(); });
+document.getElementById('txtTitle').addEventListener('input', e => { state.agentTitle = e.target.value; render(); });
+
+// ── DRAW HELPERS ──
+function drawPhoto(x, y, w, h) {
+  if (!state.photo) return;
+  const img = state.photo;
+  const scale = Math.max(w / img.width, h / img.height);
+  const sw = img.width * scale, sh = img.height * scale;
+  const sx = x + (w - sw) / 2, sy = y + (h - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh);
+}
+
+function drawPhotoFit(x, y, w, h) {
+  if (!state.photo) {
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.font = '500 28px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Photo goes here', x + w/2, y + h/2 + 10);
+    return;
+  }
+  const img = state.photo;
+  const scale = Math.max(w / img.width, h / img.height);
+  const sw = img.width * scale, sh = img.height * scale;
+  const sx = x + (w - sw) / 2, sy = y + (h - sh) / 2;
+  ctx.drawImage(img, sx, sy, sw, sh);
+}
+
+function wrapText(text, x, y, maxW, lineH, maxLines) {
+  const words = text.split(' ');
+  let line = '', lines = [];
+  for (let w of words) {
+    const test = line + (line ? ' ' : '') + w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; if (lines.length >= maxLines) break; }
+    else line = test;
+  }
+  if (line && lines.length < maxLines) lines.push(line);
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
+  return lines.length;
+}
+
+function drawBrandBar(c, W, H) {
+  // Bottom brand strip
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(0, H - 72, W, 72);
+  ctx.fillStyle = c.primary;
+  ctx.font = 'bold 26px DM Sans, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(state.agent, 32, H - 44);
+  ctx.font = '400 20px DM Sans, sans-serif';
+  ctx.fillStyle = c.accentDark;
+  ctx.fillText(state.agentTitle, 32, H - 20);
+  // Logo mark
+  ctx.fillStyle = c.primary;
+  ctx.font = 'bold 22px DM Mono, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('CURBLOOM', W - 32, H - 36);
+  ctx.font = '400 15px DM Mono, monospace';
+  ctx.fillStyle = c.accentDark;
+  ctx.fillText('exclusive territory', W - 32, H - 16);
+}
+
+function drawBrandBarDark(c, W, H) {
+  ctx.fillStyle = 'rgba(0,0,0,0.75)';
+  ctx.fillRect(0, H - 72, W, 72);
+  ctx.fillStyle = c.accent;
+  ctx.font = 'bold 26px DM Sans, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(state.agent, 32, H - 44);
+  ctx.font = '400 20px DM Sans, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.fillText(state.agentTitle, 32, H - 20);
+  ctx.fillStyle = c.accent;
+  ctx.font = 'bold 22px DM Mono, monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('CURBLOOM', W - 32, H - 36);
+  ctx.font = '400 15px DM Mono, monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillText('exclusive territory', W - 32, H - 16);
+}
+
+// ── LAYOUTS ──
+
+// ── SHARED WRAP HELPER ──
+function buildLines(text, font, maxW, uppercase) {
+  ctx.font = font;
+  const raw = uppercase ? text.toUpperCase() : text;
+  const words = raw.split(' ');
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    const candidate = cur ? cur + ' ' + w : w;
+    if (ctx.measureText(candidate).width > maxW && cur) { lines.push(cur); cur = w; }
+    else cur = candidate;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+// ─────────────────────────────────────────────
+// 1. BOLD OVERLAY
+// ─────────────────────────────────────────────
+function layoutBoldOverlay(c, W, H) {
+  if (state.photo) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+    drawPhotoFit(0, 0, W, H);
+    ctx.restore();
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0,    'rgba(0,0,0,0.15)');
+    grad.addColorStop(0.40, 'rgba(0,0,0,0.48)');
+    grad.addColorStop(1,    'rgba(0,0,0,0.90)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    ctx.fillStyle = c.primary;
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (let i = -W; i < W * 2; i += 40) {
+      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + H, H); ctx.stroke();
+    }
+  }
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(0, 0, W, 10);
+
+  const BRAND_H    = 72;
+  const PAD_L      = Math.round(W * 0.044);
+  const PAD_R      = Math.round(W * 0.05);
+  const maxTW      = W - PAD_L - PAD_R;
+  // Font size: proportional to H. Square canvas gets smaller type than wide.
+  const fontSize   = Math.round(H * (W === H ? 0.08 : 0.108));
+  const lineH      = Math.round(fontSize * 1.22);
+  const subSz      = Math.round(fontSize * 0.32);
+  const BOTTOM_PAD = BRAND_H + Math.round(H * 0.04);
+
+  const hFont = `900 ${fontSize}px Bebas Neue, sans-serif`;
+  const lines = buildLines(state.headline, hFont, maxTW, true);
+
+  const baselineLast  = H - BOTTOM_PAD;
+  const baselineFirst = baselineLast - (lines.length - 1) * lineH;
+  // Guard: never overlap the top accent bar
+  const minFirst = 10 + fontSize + subSz + 60;
+  const safeFirst = Math.max(baselineFirst, minFirst);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font      = hFont;
+  ctx.textAlign = 'left';
+  lines.forEach((l, i) => ctx.fillText(l, PAD_L, safeFirst + i * lineH));
+
+  const ruleY = safeFirst - fontSize - 28;
+  if (ruleY > 14) {
+    ctx.fillStyle = c.accent;
+    ctx.fillRect(PAD_L, ruleY, Math.round(W * 0.06), 5);
+    const subY = ruleY - 18;
+    if (subY > 14) {
+      ctx.font      = `500 ${subSz}px DM Sans, sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.68)';
+      ctx.fillText(state.sub, PAD_L, subY);
+    }
+  }
+
+  drawBrandBarDark(c, W, H);
+}
+
+// ─────────────────────────────────────────────
+// 2. DATA DROP
+// ─────────────────────────────────────────────
+function layoutDataDrop(c, W, H) {
+  ctx.fillStyle = c.bg || c.primary;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(0, 0, W, 8);
+  ctx.fillRect(0, 0, 8, H);
+
+  if (state.photo) {
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+    drawPhotoFit(0, 0, W, H);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  const BRAND_H = 72;
+  const PAD_H   = Math.round(W * 0.055);
+  const maxTW   = W - PAD_H * 2;
+
+  // Eyebrow
+  const eyeSz = Math.round(H * 0.034);
+  ctx.font      = `500 ${eyeSz}px DM Mono, monospace`;
+  ctx.fillStyle = c.accent;
+  ctx.textAlign = 'left';
+  ctx.fillText('MARKET UPDATE', PAD_H, Math.round(H * 0.1));
+
+  // Headline — proper word wrap, alternate line colors
+  const bigSz = Math.round(H * (W === H ? 0.1 : 0.134));
+  const bigLH = Math.round(bigSz * 1.18);
+  const hFont = `900 ${bigSz}px Bebas Neue, sans-serif`;
+  const lines = buildLines(state.headline, hFont, maxTW, true);
+
+  const blockH    = bigSz + (lines.length - 1) * bigLH;
+  const zoneTop   = Math.round(H * 0.15);
+  const zoneBot   = H - BRAND_H - Math.round(H * 0.22);
+  const headStart = zoneTop + Math.round(((zoneBot - zoneTop) - blockH) / 2) + bigSz;
+
+  ctx.font      = hFont;
+  ctx.textAlign = 'center';
+  lines.forEach((l, i) => {
+    ctx.fillStyle = i % 2 === 0 ? '#ffffff' : c.accent;
+    ctx.fillText(l, W / 2, headStart + i * bigLH);
+  });
+
+  // Rule
+  const ruleY = H - BRAND_H - Math.round(H * 0.19);
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth   = 1;
+  ctx.beginPath(); ctx.moveTo(PAD_H, ruleY); ctx.lineTo(W - PAD_H, ruleY); ctx.stroke();
+
+  // Sub
+  const subSz = Math.round(H * 0.038);
+  ctx.font      = `400 ${subSz}px DM Sans, sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.58)';
+  ctx.textAlign = 'center';
+  ctx.fillText(state.sub, W / 2, ruleY + Math.round(H * 0.065));
+
+  // CTA
+  const ctaSz = Math.round(H * 0.032);
+  ctx.font      = `700 ${ctaSz}px DM Mono, monospace`;
+  ctx.fillStyle = c.accent;
+  ctx.fillText('↓  FULL BREAKDOWN IN CAPTION', W / 2, H - BRAND_H - Math.round(H * 0.028));
+
+  drawBrandBar(c, W, H);
+}
+
+// ─────────────────────────────────────────────
+// 3. SPLIT HALF
+// ─────────────────────────────────────────────
+function layoutSplit(c, W, H) {
+  if (W === H) {
+    // ── SQUARE ──
+    const photoH  = Math.floor(H * 0.52);
+    const textTop = photoH + 4;
+    const textH   = H - textTop;
+    const PAD     = Math.round(W * 0.037);
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, W, photoH); ctx.clip();
+    if (state.photo) { drawPhotoFit(0, 0, W, photoH); }
+    else {
+      ctx.fillStyle = c.primary;
+      ctx.fillRect(0, 0, W, photoH);
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.font = `400 ${Math.round(W*0.024)}px DM Sans, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Add a photo above', W / 2, photoH / 2 + 10);
+    }
+    ctx.restore();
+
+    const blend = ctx.createLinearGradient(0, photoH - 70, 0, photoH + 10);
+    blend.addColorStop(0, 'rgba(0,0,0,0)');
+    blend.addColorStop(1, c.primary);
+    ctx.fillStyle = blend;
+    ctx.fillRect(0, photoH - 70, W, 80);
+    ctx.fillStyle = c.accent;
+    ctx.fillRect(0, photoH - 4, W, 8);
+    ctx.fillStyle = c.primary;
+    ctx.fillRect(0, textTop, W, textH);
+
+    const hSz    = Math.round(textH * 0.22);
+    const hLH    = Math.round(hSz * 1.2);
+    const textW  = W - PAD * 2;
+    const hFont  = `900 ${hSz}px Bebas Neue, sans-serif`;
+    const lines  = buildLines(state.headline, hFont, textW, true);
+
+    ctx.font      = hFont;
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'left';
+    const hStartY = textTop + PAD + hSz;
+    lines.slice(0, 3).forEach((l, i) => ctx.fillText(l, PAD, hStartY + i * hLH));
+
+    const lastHY       = hStartY + (Math.min(lines.length, 3) - 1) * hLH;
+    const subSz        = Math.round(textH * 0.085);
+    const subY         = lastHY + 14;
+    const agentZoneTop = H - Math.round(textH * 0.22);
+
+    if (subY + subSz < agentZoneTop - 8) {
+      ctx.font      = `400 ${subSz}px DM Sans, sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fillText(state.sub, PAD, subY);
+    }
+
+    const agentSz = Math.round(textH * 0.072);
+    ctx.font      = `bold ${agentSz}px DM Sans, sans-serif`;
+    ctx.fillStyle = c.accent;
+    ctx.fillText(state.agent, PAD, H - PAD - agentSz - 2);
+    ctx.font      = `400 ${Math.round(agentSz * 0.78)}px DM Sans, sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+    ctx.fillText(state.agentTitle, PAD, H - PAD);
+    ctx.font      = `bold ${Math.round(agentSz * 0.72)}px DM Mono, monospace`;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.textAlign = 'right';
+    ctx.fillText('CURBLOOM', W - PAD, H - PAD);
+
+  } else {
+    // ── WIDE (Facebook) ──
+    const photoW = Math.floor(W * 0.46);
+    const textX  = photoW + 8;
+    const textW  = W - textX - Math.round(W * 0.04);
+    const PAD_V  = Math.round(H * 0.1);
+
+    ctx.fillStyle = c.primary;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, photoW, H); ctx.clip();
+    if (state.photo) { drawPhotoFit(0, 0, photoW, H); }
+    else {
+      ctx.fillStyle = c.bg || '#0d1628';
+      ctx.fillRect(0, 0, photoW, H);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.font = `400 ${Math.round(H*0.032)}px DM Sans, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('Photo', photoW / 2, H / 2 + 8);
+    }
+    ctx.restore();
+
+    ctx.fillStyle = c.accent;
+    ctx.fillRect(photoW, 0, 8, H);
+
+    const eyeSz  = Math.round(H * 0.026);
+    ctx.font      = `500 ${eyeSz}px DM Mono, monospace`;
+    ctx.fillStyle = c.accent;
+    ctx.textAlign = 'left';
+    const eyeY    = PAD_V + eyeSz;
+    ctx.fillText('CURBLOOM', textX, eyeY);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth   = 1;
+    ctx.beginPath();
+    ctx.moveTo(textX, eyeY + 8);
+    ctx.lineTo(textX + Math.round(textW * 0.4), eyeY + 8);
+    ctx.stroke();
+
+    const hSz    = Math.round((H - PAD_V * 2) * 0.18);
+    const hLH    = Math.round(hSz * 1.18);
+    const hFont  = `900 ${hSz}px Bebas Neue, sans-serif`;
+    const hLines = buildLines(state.headline, hFont, textW, true);
+    const hStartY = eyeY + 10 + hSz;
+
+    ctx.font      = hFont;
+    ctx.fillStyle = '#ffffff';
+    hLines.slice(0, 3).forEach((l, i) => ctx.fillText(l, textX, hStartY + i * hLH));
+
+    const lastHY     = hStartY + (Math.min(hLines.length, 3) - 1) * hLH;
+    const subSz      = Math.round(H * 0.032);
+    const subY       = lastHY + Math.round(H * 0.04);
+    const agentSz    = Math.round(H * 0.034);
+    const agentBot   = H - PAD_V;
+
+    if (subY + subSz < agentBot - agentSz * 2 - 8) {
+      ctx.font      = `400 ${subSz}px DM Sans, sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.52)';
+      ctx.fillText(state.sub, textX, subY);
+    }
+
+    ctx.font      = `bold ${agentSz}px DM Sans, sans-serif`;
+    ctx.fillStyle = c.accent;
+    ctx.fillText(state.agent, textX, agentBot - agentSz - 2);
+    ctx.font      = `400 ${Math.round(agentSz * 0.8)}px DM Sans, sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,0.38)';
+    ctx.fillText(state.agentTitle, textX, agentBot);
+  }
+}
+
+// ─────────────────────────────────────────────
+// 4. BIG QUOTE
+// ─────────────────────────────────────────────
+function layoutQuote(c, W, H) {
+  ctx.fillStyle = c.bg || c.primary;
+  ctx.fillRect(0, 0, W, H);
+
+  if (state.photo) {
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.clip();
+    drawPhotoFit(0, 0, W, H);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(0, 0, W, 10);
+  ctx.fillRect(0, H - 10, W, 10);
+
+  const BRAND_H  = 72;
+  // Usable zone sits between the two accent bars and brand bar
+  const ZONE_TOP = 10 + Math.round(H * 0.04);
+  const ZONE_BOT = H - BRAND_H - Math.round(H * 0.04);
+  const ZONE_H   = ZONE_BOT - ZONE_TOP;
+
+  // Type sizing proportional to ZONE_H — works on both 1080 and 630
+  const qFont  = Math.round(ZONE_H * 0.135);
+  const qLineH = Math.round(qFont * 1.52);
+  const subSz  = Math.round(qFont * 0.46);
+  const subGap = Math.round(qFont * 0.7);
+  const PAD_H  = Math.round(W * 0.09);
+  const maxTW  = W - PAD_H * 2;
+
+  const qFontStr = `700 italic ${qFont}px Playfair Display, serif`;
+  const lines    = buildLines(state.headline, qFontStr, maxTW, false);
+
+  const textBlockH = qFont + (lines.length - 1) * qLineH;
+  const totalH     = textBlockH + subGap + subSz;
+
+  // Center entire content block within ZONE
+  const blockTop  = ZONE_TOP + Math.round((ZONE_H - totalH) / 2);
+  const firstBase = blockTop + qFont;
+
+  // Corner bracket marks — span full canvas width
+  const MK  = Math.round(W * 0.05);
+  const MW  = Math.max(4, Math.round(MK * 0.14));
+  const INS = Math.round(W * 0.042);
+  const MO  = Math.round(MW * 2);  // mark vertical offset from block top/bottom
+
+  ctx.fillStyle = c.accent;
+  // Opening ⌜ top-left
+  ctx.fillRect(INS,           blockTop - MO,             MK, MW);
+  ctx.fillRect(INS,           blockTop - MO,             MW, MK);
+  // Closing ⌟ bottom-right
+  const bBot = blockTop + textBlockH + MO;
+  ctx.fillRect(W - INS - MK, bBot,       MK, MW);
+  ctx.fillRect(W - INS - MW, bBot - MK,  MW, MK);
+
+  // Quote text
+  ctx.font      = qFontStr;
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'center';
+  lines.forEach((l, i) => ctx.fillText(l, W / 2, firstBase + i * qLineH));
+
+  // Attribution
+  const subY = firstBase + (lines.length - 1) * qLineH + subGap;
+  ctx.font      = `400 ${subSz}px DM Sans, sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
+  ctx.textAlign = 'center';
+  ctx.fillText('— ' + state.sub, W / 2, subY);
+
+  drawBrandBar(c, W, H);
+}
+
+// ─────────────────────────────────────────────
+// 5. BEFORE / AFTER
+// ─────────────────────────────────────────────
+function layoutBeforeAfter(c, W, H) {
+  const BRAND_H  = 72;
+  const half     = Math.floor(W / 2);
+  const contentH = H - BRAND_H;
+  const PAD_V    = Math.round(contentH * 0.12);
+
+  // Left — dark
+  ctx.save();
+  ctx.beginPath(); ctx.rect(0, 0, half, contentH); ctx.clip();
+  if (state.photo) {
+    drawPhotoFit(0, 0, half, contentH);
+    ctx.fillStyle = 'rgba(0,0,0,0.58)';
+    ctx.fillRect(0, 0, half, contentH);
+  } else {
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, half, contentH);
+  }
+  ctx.restore();
+
+  // Right — brand
+  ctx.save();
+  ctx.beginPath(); ctx.rect(half, 0, half, contentH); ctx.clip();
+  ctx.fillStyle = c.primary;
+  ctx.fillRect(half, 0, half, contentH);
+  if (state.photo) {
+    ctx.globalAlpha = 0.12;
+    drawPhotoFit(half, 0, half, contentH);
+    ctx.globalAlpha = 1;
+  }
+  ctx.restore();
+
+  // Divider
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(half - 4, 0, 8, contentH);
+
+  // Labels
+  const labelSz = Math.round(contentH * 0.036);
+  ctx.font      = `700 ${labelSz}px DM Mono, monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.42)';
+  ctx.fillText('BEFORE', half / 2, PAD_V);
+  ctx.fillStyle = c.accent;
+  ctx.fillText('AFTER', half + half / 2, PAD_V);
+
+  // Text — vertically centered in each half
+  const hSz  = Math.round(contentH * (W === H ? 0.088 : 0.118));
+  const hLH  = Math.round(hSz * 1.18);
+  const hMax = half - Math.round(half * 0.12);
+  const lFont = `900 ${hSz}px Bebas Neue, sans-serif`;
+
+  const leftText  = (state.headline.includes('→') ? state.headline.split('→')[0] : state.headline).trim();
+  const rightText = (state.headline.includes('→') ? state.headline.split('→')[1] : state.sub).trim();
+
+  const lLines = buildLines(leftText,  lFont, hMax, true);
+  const rLines = buildLines(rightText, lFont, hMax, true);
+
+  const lBlockH = hSz + (lLines.length - 1) * hLH;
+  const rBlockH = hSz + (rLines.length - 1) * hLH;
+  const lStartY = PAD_V + Math.round(((contentH - PAD_V * 2) - lBlockH) / 2) + hSz;
+  const rStartY = PAD_V + Math.round(((contentH - PAD_V * 2) - rBlockH) / 2) + hSz;
+
+  ctx.font      = lFont;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.82)';
+  lLines.slice(0, 4).forEach((l, i) => ctx.fillText(l, half / 2, lStartY + i * hLH));
+  ctx.fillStyle = '#ffffff';
+  rLines.slice(0, 4).forEach((l, i) => ctx.fillText(l, half + half / 2, rStartY + i * hLH));
+
+  // Arrow
+  const arrowY = Math.round(contentH / 2);
+  const arrowR = Math.round(contentH * (W === H ? 0.038 : 0.046));
+  ctx.fillStyle = c.accent;
+  ctx.beginPath();
+  ctx.arc(half, arrowY, arrowR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = c.primary;
+  ctx.font      = `bold ${Math.round(arrowR * 1.1)}px DM Sans, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('→', half, arrowY + Math.round(arrowR * 0.38));
+
+  drawBrandBar(c, W, H);
+}
+
+// ─────────────────────────────────────────────
+// 6. CLEAN MINIMAL
+// ─────────────────────────────────────────────
+function layoutMinimal(c, W, H) {
+  const BRAND_H = 72;
+  const U       = Math.round(H * 0.026);
+  const PAD_L   = Math.round(W * 0.059);
+  const textW   = W - PAD_L - Math.round(W * 0.04);
+
+  ctx.fillStyle = '#f5f4f0';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = c.primary;
+  ctx.fillRect(0, 0, W, Math.round(U * 0.45));
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(0, 0, Math.round(U * 0.36), H);
+
+  // Eyebrow
+  const eyeSz = Math.round(H * 0.026);
+  ctx.font      = `500 ${eyeSz}px DM Mono, monospace`;
+  ctx.fillStyle = c.accent;
+  ctx.textAlign = 'left';
+  const eyeY    = U * 3 + eyeSz;
+  ctx.fillText(state.agent.toUpperCase(), PAD_L, eyeY);
+
+  // Rule
+  const ruleY = eyeY + U * 0.8;
+  ctx.strokeStyle = 'rgba(0,0,0,0.09)';
+  ctx.lineWidth   = 1;
+  ctx.beginPath(); ctx.moveTo(PAD_L, ruleY); ctx.lineTo(W - Math.round(W * 0.04), ruleY); ctx.stroke();
+
+  // Headline
+  const hSz   = Math.round(H * (W === H ? 0.074 : 0.098));
+  const hLH   = Math.round(hSz * 1.18);
+  const hFont = `900 ${hSz}px Bebas Neue, sans-serif`;
+  const lines = buildLines(state.headline, hFont, textW, true);
+
+  ctx.font      = hFont;
+  ctx.fillStyle = c.primary;
+  const headY   = ruleY + U * 2.5 + hSz;
+  lines.slice(0, 4).forEach((l, i) => ctx.fillText(l, PAD_L, headY + i * hLH));
+
+  const lastHL    = Math.min(lines.length, 4);
+  const lastHBase = headY + (lastHL - 1) * hLH;
+
+  // Accent underline — proportional width
+  ctx.fillStyle = c.accent;
+  ctx.fillRect(PAD_L, lastHBase + Math.round(U * 0.6), Math.round(W * 0.28), Math.round(U * 0.3));
+
+  // Sub
+  const subSz  = Math.round(H * (W === H ? 0.026 : 0.032));
+  const subLH  = Math.round(subSz * 1.55);
+  const subY   = lastHBase + U * 3.5;
+  ctx.font      = `400 ${subSz}px DM Sans, sans-serif`;
+  ctx.fillStyle = 'rgba(0,0,0,0.46)';
+  wrapText(state.sub, PAD_L, subY, textW, subLH, 3);
+
+  // CTA — only draw if enough room above brand bar
+  const ctaH    = Math.round(H * (W === H ? 0.052 : 0.07));
+  const ctaW    = Math.round(W * 0.248);
+  const ctaY    = H - BRAND_H - Math.round(U * 1.2) - ctaH;
+  const subEndY = subY + subLH * 2;
+
+  if (ctaY > subEndY + U * 2) {
+    ctx.fillStyle = c.primary;
+    ctx.beginPath();
+    ctx.roundRect(PAD_L, ctaY, ctaW, ctaH, ctaH / 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font      = `700 ${Math.round(ctaH * 0.34)}px DM Mono, monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText('→  DM FOR DETAILS', PAD_L + ctaW / 2, ctaY + ctaH * 0.63);
+  }
+
+  // Brand bar
+  ctx.fillStyle = c.primary;
+  ctx.fillRect(0, H - BRAND_H, W, BRAND_H);
+
+  const barSz = Math.round(BRAND_H * 0.34);
+  ctx.fillStyle = c.accent;
+  ctx.font      = `bold ${barSz}px DM Sans, sans-serif`;
+  ctx.textAlign = 'left';
+  ctx.fillText(state.agent, 32, H - BRAND_H + Math.round(BRAND_H * 0.52));
+  ctx.font      = `400 ${Math.round(barSz * 0.75)}px DM Sans, sans-serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.48)';
+  ctx.fillText(state.agentTitle, 32, H - BRAND_H + Math.round(BRAND_H * 0.82));
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.font      = `bold ${Math.round(barSz * 0.7)}px DM Mono, monospace`;
+  ctx.textAlign = 'right';
+  ctx.fillText('CURBLOOM', W - 32, H - BRAND_H + Math.round(BRAND_H * 0.52));
+  ctx.font      = `400 ${Math.round(barSz * 0.54)}px DM Mono, monospace`;
+  ctx.fillText('exclusive territory', W - 32, H - BRAND_H + Math.round(BRAND_H * 0.82));
+}
+
+// ── MAIN RENDER ──
+function render() {
+  const { w, h } = getSize();
+  const c = clients[state.clientIdx];
+
+  ctx.clearRect(0, 0, w, h);
+
+  switch (state.layout) {
+    case 'bold-overlay':   layoutBoldOverlay(c, w, h); break;
+    case 'data-drop':      layoutDataDrop(c, w, h); break;
+    case 'split':          layoutSplit(c, w, h); break;
+    case 'quote':          layoutQuote(c, w, h); break;
+    case 'before-after':   layoutBeforeAfter(c, w, h); break;
+    case 'minimal':        layoutMinimal(c, w, h); break;
+  }
+}
+
+// ── EXPORT ──
+function exportPNG() {
+  const { w, h } = getSize();
+  // Render at full resolution
+  const tmpCanvas = document.createElement('canvas');
+  tmpCanvas.width = w; tmpCanvas.height = h;
+  const tmpCtx = tmpCanvas.getContext('2d');
+
+  // Re-draw onto full-size canvas
+  const oldCtx = ctx;
+  Object.assign(tmpCtx, { font: ctx.font });
+
+  // Use original canvas (already full size)
+  const link = document.createElement('a');
+  link.download = `curbloom-${state.agent.replace(/\s/g,'-').toLowerCase()}-${state.layout}-${state.platform}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ── INIT ──
+resizeCanvas();
+render();
+window.addEventListener('resize', () => { resizeCanvas(); render(); });
+</script>
+</body>
+</html>
