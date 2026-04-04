@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom — Welcome Email Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green:   #1e4d2b;
+  --green-m: #2d6a4f;
+  --green-l: #52b788;
+  --cream:   #f0ead6;
+  --cream-d: #e0d4be;
+  --orange:  #ff914d;
+  --orange-d:#c4693a;
+  --text:    #1a1a1a;
+  --muted:   #5a5a5a;
+}
+body { font-family: 'DM Sans', sans-serif; background: #d8d0c0; padding: 2rem; }
+
+.operator-bar {
+  max-width: 820px; margin: 0 auto 0.75rem;
+  background: #1a1208; border: 1px solid var(--orange-d); border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.op-badge { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--orange); background: rgba(255,145,77,0.12); padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.op-text { font-size: 0.75rem; color: #c09060; line-height: 1.5; }
+.op-text strong { color: var(--orange); }
+
+.page { max-width: 820px; margin: 0 auto; background: var(--cream); box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+
+/* Email header strip */
+.email-meta {
+  background: white;
+  border-bottom: 2px solid var(--cream-d);
+  padding: 1.25rem 2.5rem;
+}
+.email-meta-row { display: flex; gap: 0.5rem; align-items: baseline; margin-bottom: 0.35rem; font-size: 0.8rem; }
+.email-meta-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); min-width: 48px; }
+.email-meta-val { color: var(--text); }
+.email-meta-val.subject { font-weight: 700; font-size: 0.9rem; color: var(--green); }
+
+/* Fill-in highlights */
+.fill { background: rgba(255,145,77,0.15); border-radius: 3px; padding: 0 3px; color: var(--orange-d); font-style: italic; }
+
+/* Email brand header */
+.email-header { background: var(--green); padding: 2rem 2.5rem 1.75rem; }
+.logo-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0; }
+.logo-row svg { width: 38px; height: 38px; }
+.logo-row-text { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700; color: var(--cream); letter-spacing: 1px; }
+
+.accent-rule { height: 3px; background: var(--orange); }
+
+/* Email body */
+.email-body { padding: 2rem 2.5rem; background: white; }
+.greeting { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--green); margin-bottom: 1.25rem; }
+.email-p { font-size: 0.85rem; line-height: 1.8; color: var(--text); margin-bottom: 1.1rem; }
+
+/* What to expect box */
+.expect-box { background: var(--cream); border-radius: 8px; padding: 1.25rem 1.5rem; margin: 1.5rem 0; border-left: 4px solid var(--orange); }
+.expect-title { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange-d); margin-bottom: 0.75rem; }
+.expect-items { display: flex; flex-direction: column; gap: 0.5rem; }
+.expect-item { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.82rem; color: var(--text); line-height: 1.5; }
+.expect-num { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--orange-d); background: rgba(255,145,77,0.12); padding: 1px 6px; border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+
+/* Territory lock callout */
+.territory-callout { background: var(--green); border-radius: 8px; padding: 1rem 1.25rem; margin: 1.5rem 0; }
+.territory-callout p { font-size: 0.8rem; color: rgba(240,234,214,0.85); line-height: 1.65; }
+.territory-callout strong { color: var(--orange); }
+
+.sign-off { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic; color: var(--muted); margin-top: 1.5rem; margin-bottom: 0.25rem; }
+.signature { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 700; color: var(--green); }
+.sig-title-text { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+/* Email footer */
+.email-footer { background: var(--green); padding: 1.25rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
+.ef-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 700; color: var(--cream); }
+.ef-note { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: rgba(240,234,214,0.4); text-align: right; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div class="operator-bar">
+  <span class="op-badge">⚙ Operator Template</span>
+  <div class="op-text">Fill in every <strong style="color:#ff914d">highlighted field</strong> before sending. BCC yourself. Send within 24 hours of signing.</div>
+</div>
+
+<div class="page">
+
+  <!-- Email metadata preview -->
+  <div class="email-meta">
+    <div class="email-meta-row">
+      <span class="email-meta-label">To</span>
+      <span class="email-meta-val"><span class="fill">[Client First Name]</span> &lt;<span class="fill">[client@email.com]</span>&gt;</span>
+    </div>
+    <div class="email-meta-row">
+      <span class="email-meta-label">From</span>
+      <span class="email-meta-val">Curbloom &lt;<span class="fill">[your@email.com]</span>&gt;</span>
+    </div>
+    <div class="email-meta-row">
+      <span class="email-meta-label">Subject</span>
+      <span class="email-meta-val subject">Welcome to Curbloom — Your content starts <span class="fill">[Month]</span> 1st 🌱</span>
+    </div>
+  </div>
+
+  <!-- Email header -->
+  <div class="email-header">
+    <div class="logo-row">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="23" stroke="#f0ead6" stroke-width="1.5" opacity="0.3"/>
+        <path d="M24 8 C24 8 14 16 14 26 C14 32 18.5 37 24 38 C29.5 37 34 32 34 26 C34 16 24 8 24 8Z" fill="#f0ead6" opacity="0.9"/>
+        <path d="M24 38 C24 38 18 30 24 20 C30 30 24 38 24 38Z" fill="#1e4d2b"/>
+        <path d="M24 20 L24 38" stroke="#1e4d2b" stroke-width="1.5"/>
+        <circle cx="24" cy="10" r="2.5" fill="#ff914d"/>
+      </svg>
+      <div class="logo-row-text">Curbloom</div>
+    </div>
+  </div>
+  <div class="accent-rule"></div>
+
+  <!-- Body -->
+  <div class="email-body">
+
+    <div class="greeting">Welcome, <span class="fill">[First Name]</span>. 🌱</div>
+
+    <p class="email-p">
+      I'm genuinely excited to work with you. <span class="fill">[Community name]</span> is a great market and I think we're going to build something that sets you apart in a real way — not just another agent posting listings.
+    </p>
+
+    <p class="email-p">
+      Here's exactly what happens next and what you can expect every single month going forward.
+    </p>
+
+    <div class="expect-box">
+      <div class="expect-title">What Happens Next</div>
+      <div class="expect-items">
+        <div class="expect-item">
+          <span class="expect-num">01</span>
+          <span>Your onboarding questionnaire has been <span class="fill">[sent / is attached]</span>. Fill it out at your own pace — the more detail you give me, the more your content sounds like <em>you</em>, not a template.</span>
+        </div>
+        <div class="expect-item">
+          <span class="expect-num">02</span>
+          <span>I'll build your first 30-day calendar and caption set once I have your answers back. You'll have everything in hand before <span class="fill">[Month]</span> 1st.</span>
+        </div>
+        <div class="expect-item">
+          <span class="expect-num">03</span>
+          <span>Every month after that, you'll receive your content package by the 1st — calendar, captions<span class="fill">[, and graphics]</span> ready to go for the full month.</span>
+        </div>
+        <div class="expect-item">
+          <span class="expect-num">04</span>
+          <span>You post on your schedule. The content is yours — I'll never watermark it, and there's nothing that ties it back to me. It just looks like you showing up consistently.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="territory-callout">
+      <p><strong>🔒 Your territory is locked.</strong> As of today, <span class="fill">[community/market]</span> is exclusively yours. No other agent in your area will receive content from Curbloom while you're a client. That's a real competitive advantage — and it's yours to keep as long as we work together.</p>
+    </div>
+
+    <p class="email-p">
+      One thing I ask: when you get the questionnaire, don't overthink it. The best answers are the honest ones. Tell me how you actually talk, what your life looks like outside of work, and what you want people to think of when they think of you. That's what makes the content work.
+    </p>
+
+    <p class="email-p">
+      Any questions before we dig in, reply to this email and I'll get back to you fast. I'm glad you're here.
+    </p>
+
+    <div class="sign-off">Talk soon,</div>
+    <div class="signature">Ez</div>
+    <div class="sig-title-text">Curbloom · Real Estate Social Media</div>
+
+  </div>
+
+  <div class="email-footer">
+    <div class="ef-brand">Curbloom</div>
+    <div class="ef-note">curbloomgroup.com<br>You're receiving this because you signed up for Curbloom services.</div>
+  </div>
+
+</div>
+</body>
+</html>
