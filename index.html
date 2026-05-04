@@ -4,584 +4,391 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Curbloom — The Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --green-deep: #2d6a4f;
-    --green-mid: #40916c;
-    --green-bright: #52b788;
-    --green-light: #74c69d;
-    --green-pale: #b7e4c7;
-    --orange: #ff914d;
-    --orange-dim: #c4693a;
-    --bg-base: #0b0f14;
-    --bg-1: #0f1419;
-    --bg-2: #141b24;
-    --bg-3: #1a2535;
-    --bg-4: #1e2d3d;
-    --border: #1e2d3d;
-    --border-bright: #2d6a4f;
-    --text-primary: #e8eef4;
-    --text-secondary: #8a9bb0;
-    --text-dim: #4a5568;
-    --purple: #c084fc;
-    --purple-bg: #1a0e2e;
-    --purple-border: #4a1a7a;
-    --gold: #ffd166;
-  }
+:root {
+  --green: #1e4d2b;
+  --green-mid: #2d6a4f;
+  --green-light: #52b788;
+  --green-pale: #b7e4c7;
+  --orange: #ff914d;
+  --bg: #0b0f0d;
+  --surface: #111714;
+  --surface2: #171e1a;
+  --border: #1e2e24;
+  --border2: #253020;
+  --text: #e8ede9;
+  --text-muted: #7a9080;
+  --text-dim: #3d5244;
+}
 
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg-base);
-    color: var(--text-primary);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* ── HEADER ── */
-  .header {
-    background: var(--bg-1);
-    border-bottom: 1px solid var(--border-bright);
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--green-bright);
-    letter-spacing: 3px;
-  }
-  .logo-sub {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 1px;
-  }
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .nav-link {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 1px;
-    color: var(--text-secondary);
-    text-decoration: none;
-    padding: 0.4rem 0.9rem;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    transition: all 0.15s;
-  }
-  .nav-link:hover { border-color: var(--green-bright); color: var(--green-light); }
-  .nav-link.primary { background: var(--green-deep); border-color: var(--green-bright); color: var(--green-pale); }
-  .nav-link.primary:hover { background: var(--green-mid); }
+/* Header */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1.2rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; color: var(--green-light); letter-spacing: 2px; }
+.logo-sub { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--text-muted); letter-spacing: 3px; text-transform: uppercase; margin-top: -2px; }
+.header-right { text-align: right; }
+.header-right .version { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text-dim); letter-spacing: 1px; }
 
-  /* ── HERO ── */
-  .hero {
-    padding: 2.5rem 2rem 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .hero-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--green-bright);
-    margin-bottom: 0.6rem;
-  }
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    line-height: 1.15;
-    margin-bottom: 0.5rem;
-  }
-  .hero-title span { color: var(--green-bright); }
-  .hero-desc {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    max-width: 520px;
-    line-height: 1.7;
-  }
+/* Layout */
+.app { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 66px); }
 
-  /* ── STATUS LEGEND ── */
-  .legend {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0 2rem;
-    max-width: 1200px;
-    margin: 0 auto 1.5rem;
-    flex-wrap: wrap;
-  }
-  .legend-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
-  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.7rem; color: var(--text-secondary); }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .ld-live { background: var(--green-bright); box-shadow: 0 0 6px var(--green-bright); }
-  .ld-soon { background: var(--orange); }
-  .ld-build { background: var(--gold); }
-  .ld-idea { background: var(--purple); }
+/* Sidebar */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+.sidebar-section { margin-bottom: 2rem; }
+.sidebar-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.85rem; }
 
-  /* ── MAIN GRID ── */
-  .content { max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem; }
+/* Client cards in sidebar */
+.client-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+}
+.client-card:hover { border-color: var(--green-mid); }
+.client-card .cname { font-weight: 600; font-size: 0.85rem; color: var(--text); }
+.client-card .cmeta { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--green-light); margin-top: 2px; }
+.client-card .ccomm { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-dim); margin-top: 2px; }
+.client-dot { width: 7px; height: 7px; border-radius: 50%; position: absolute; top: 1rem; right: 1rem; background: var(--green-light); box-shadow: 0 0 6px var(--green-light); }
 
-  .phase {
-    margin-bottom: 2.5rem;
-  }
-  .phase-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  .phase-number {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 2px;
-    color: var(--text-dim);
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 3px 8px;
-  }
-  .phase-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-  }
-  .phase-line { flex: 1; height: 1px; background: var(--border); }
+.onboard-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--green-mid);
+  border-radius: 8px;
+  padding: 0.7rem;
+  color: var(--green-light);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  text-align: center;
+  display: block;
+  text-decoration: none;
+  margin-top: 0.5rem;
+}
+.onboard-btn:hover { background: rgba(82,183,136,0.08); }
 
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 0.75rem;
-  }
+/* Nav links in sidebar */
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: all 0.18s;
+  margin-bottom: 0.3rem;
+  border: 1px solid transparent;
+}
+.nav-link:hover { background: var(--surface2); border-color: var(--border); color: var(--text); }
+.nav-link .icon { font-size: 1rem; flex-shrink: 0; }
+.nav-link .nav-status { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 1px 7px; border-radius: 8px; }
+.status-live { background: rgba(82,183,136,0.15); color: var(--green-light); border: 1px solid var(--green-mid); }
+.status-next { background: rgba(255,145,77,0.12); color: var(--orange); border: 1px solid rgba(255,145,77,0.3); }
+.status-planned { background: rgba(61,82,68,0.3); color: var(--text-dim); border: 1px solid var(--border2); }
 
-  /* ── CARD ── */
-  .card {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.1rem 1.1rem 0.9rem;
-    cursor: pointer;
-    transition: all 0.18s;
-    text-decoration: none;
-    display: block;
-    position: relative;
-    overflow: hidden;
-  }
-  .card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: transparent;
-    transition: background 0.18s;
-  }
-  .card.live { cursor: pointer; }
-  .card.live::before { background: var(--green-bright); }
-  .card.live:hover { border-color: var(--green-bright); background: #162230; transform: translateY(-2px); box-shadow: 0 6px 24px rgba(82,183,136,0.12); }
+/* Main */
+.main { padding: 2rem 2.5rem; overflow-y: auto; }
 
-  .card.coming-soon {
-    cursor: default;
-    opacity: 0.6;
-  }
-  .card.coming-soon::before { background: var(--orange); }
+/* Welcome block */
+.welcome {
+  margin-bottom: 2.5rem;
+}
+.welcome-eyebrow { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.6rem; }
+.welcome-title { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 0.6rem; }
+.welcome-sub { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; max-width: 560px; }
 
-  .card.next-build {
-    cursor: default;
-    opacity: 0.55;
-  }
-  .card.next-build::before { background: var(--gold); }
+/* Stats strip */
+.stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 2.5rem; }
+.stat-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; }
+.stat-val { font-family: 'DM Mono', monospace; font-size: 1.6rem; font-weight: 500; color: var(--green-light); }
+.stat-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); margin-top: 3px; }
 
-  .card.concept {
-    cursor: default;
-    opacity: 0.45;
-  }
-  .card.concept::before { background: var(--purple); }
+/* Tool grid */
+.section-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .card-icon { font-size: 1.4rem; margin-bottom: 0.6rem; }
-  .card-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 0.25rem;
-  }
-  .card-desc {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    line-height: 1.55;
-    margin-bottom: 0.65rem;
-  }
-  .card-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.5px;
-    padding: 3px 8px;
-    border-radius: 10px;
-  }
-  .badge-live { background: #0d2e1c; color: var(--green-bright); border: 1px solid var(--green-deep); }
-  .badge-soon { background: #2a1a0a; color: var(--orange); border: 1px solid #5a3a1a; }
-  .badge-build { background: #2a2a0a; color: var(--gold); border: 1px solid #5a5a1a; }
-  .badge-concept { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
-  .badge-doc { background: var(--bg-3); color: var(--text-secondary); border: 1px solid var(--border); }
+.tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
 
-  .lock-icon {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    font-size: 0.75rem;
-    opacity: 0.4;
-  }
+.tool-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.4rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.2s;
+}
+.tool-card:hover { border-color: var(--green-mid); transform: translateY(-2px); }
+.tool-card:hover::before { background: var(--green-light); }
+.tool-card.orange:hover::before { background: var(--orange); }
 
-  /* ── CLIENTS STRIP ── */
-  .clients-strip {
-    background: var(--bg-2);
-    border: 1px solid var(--border-bright);
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem;
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .clients-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--green-bright);
-    white-space: nowrap;
-  }
-  .client-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--bg-3);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 0.35rem 0.9rem;
-    font-size: 0.75rem;
-  }
-  .client-dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--green-bright); box-shadow: 0 0 5px var(--green-bright); }
-  .client-dot-onboard { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 5px var(--orange); }
-  .client-name-pill { font-weight: 600; color: var(--text-primary); }
-  .client-status-pill { font-size: 0.65rem; color: var(--text-secondary); }
+.tool-icon { font-size: 1.6rem; margin-bottom: 0.75rem; }
+.tool-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+.tool-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.9rem; }
+.tool-footer { display: flex; align-items: center; justify-content: space-between; }
+.tool-status { font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 2px 8px; border-radius: 8px; }
+.tool-arrow { font-size: 0.8rem; color: var(--text-dim); transition: color 0.2s, transform 0.2s; }
+.tool-card:hover .tool-arrow { color: var(--green-light); transform: translateX(3px); }
+.tool-card.orange:hover .tool-arrow { color: var(--orange); }
 
-  /* ── NEXT UP BANNER ── */
-  .next-banner {
-    background: linear-gradient(135deg, #1a1200, #1a2200);
-    border: 1px solid #3a3a10;
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .next-icon { font-size: 1.3rem; }
-  .next-text { font-size: 0.78rem; color: var(--gold); line-height: 1.6; }
-  .next-text strong { color: #ffe5a0; }
+/* Priority alert */
+.priority-alert {
+  background: rgba(255,145,77,0.08);
+  border: 1px solid rgba(255,145,77,0.25);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.priority-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+.priority-text { font-size: 0.8rem; color: #f4a261; line-height: 1.7; }
+.priority-text strong { color: var(--orange); }
 
-  /* ── FOOTER ── */
-  .footer {
-    border-top: 1px solid var(--border);
-    padding: 1.5rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .footer-brand { font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 800; color: var(--green-bright); letter-spacing: 2px; }
-  .footer-note { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-dim); letter-spacing: 1px; }
+/* Recent clients table */
+.client-table { width: 100%; border-collapse: collapse; }
+.client-table th { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-dim); padding: 0.5rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border); }
+.client-table td { padding: 0.7rem 0.8rem; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
+.client-table tr:last-child td { border-bottom: none; }
+.client-table tbody tr { transition: background 0.15s; cursor: pointer; }
+.client-table tbody tr:hover { background: var(--surface2); }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div>
-    <div class="logo">CURBLOOM</div>
-    <div class="logo-sub">The Playbook — Operator Hub</div>
+    <div class="logo">Curbloom</div>
+    <div class="logo-sub">The Playbook — Internal Operations Hub</div>
   </div>
   <div class="header-right">
-    <a href="c4.html" class="nav-link primary">⚡ Open C4</a>
-    <a href="reporting.html" class="nav-link">📊 Reports</a>
-    <a href="post-designer.html" class="nav-link">🎨 Post Designer</a>
+    <div class="version">Internal Tool · Not Client-Facing</div>
   </div>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-eyebrow">Operator Command Center</div>
-  <div class="hero-title">The <span>Playbook</span></div>
-  <div class="hero-desc">Every tool, document, and workflow for running Curbloom — organized by phase. Live tools open directly. Everything else is queued and coming.</div>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Active Clients</div>
+      <div id="clientList">
+        <div style="font-size:0.75rem;color:var(--text-dim);padding:0.5rem 0;">Loading...</div>
+      </div>
+      <a href="onboarding.html" class="onboard-btn">+ Onboard New Client</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Tools</div>
+      <a href="c4.html" class="nav-link">
+        <span class="icon">⚡</span> C4 — Content Command
+        <span class="nav-status status-live">Live</span>
+      </a>
+      <a href="post-designer.html" class="nav-link">
+        <span class="icon">🎨</span> Post Designer
+        <span class="nav-status status-live">Live</span>
+      </a>
+      <a href="reporting.html" class="nav-link">
+        <span class="icon">📊</span> Reporting Dashboard
+        <span class="nav-status status-live">Live</span>
+      </a>
+      <a href="sop.html" class="nav-link">
+        <span class="icon">📋</span> Monthly Delivery SOP
+        <span class="nav-status status-live">Live</span>
+      </a>
+      <a href="onboarding.html" class="nav-link">
+        <span class="icon">📝</span> Client Onboarding
+        <span class="nav-status status-live">Live</span>
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">On the Horizon</div>
+      <a href="#" class="nav-link">
+        <span class="icon">🌐</span> Landing Page
+        <span class="nav-status status-next">Next Up</span>
+      </a>
+      <a href="#" class="nav-link">
+        <span class="icon">📣</span> Reel Scripts
+        <span class="nav-status status-next">Next Up</span>
+      </a>
+      <a href="#" class="nav-link">
+        <span class="icon">📈</span> CRM / Pipeline
+        <span class="nav-status status-planned">Planned</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="welcome">
+      <div class="welcome-eyebrow">Internal Operations — Ez Crocker</div>
+      <div class="welcome-title">The Playbook</div>
+      <div class="welcome-sub">Your complete Curbloom operating system. Every tool, every client, every workflow — in one place. Internal use only.</div>
+    </div>
+
+    <div class="stats-strip" id="statsStrip">
+      <div class="stat-box"><div class="stat-val" id="statClients">—</div><div class="stat-label">Active Clients</div></div>
+      <div class="stat-box"><div class="stat-val">5</div><div class="stat-label">Live Tools</div></div>
+      <div class="stat-box"><div class="stat-val" id="statPosts">—</div><div class="stat-label">Posts / Month</div></div>
+      <div class="stat-box"><div class="stat-val" id="statMarkets">—</div><div class="stat-label">Exclusive Markets</div></div>
+    </div>
+
+    <div class="priority-alert">
+      <div class="priority-icon">🎯</div>
+      <div class="priority-text"><strong>Priority: Client Acquisition.</strong> The tools are built. The sequencing trap is tool-building over outreach — the next milestone is new clients. Leverage Sara and Emma's results as social proof. Post the carousel. DM agents. Close.</div>
+    </div>
+
+    <div class="section-label">Internal Tools</div>
+    <div class="tool-grid">
+      <a href="onboarding.html" class="tool-card">
+        <div class="tool-icon">📝</div>
+        <div class="tool-name">Client Onboarding</div>
+        <div class="tool-desc">Full 5-step questionnaire. Captures brand voice, market, goals, and personal details. Auto-populates the client into all tools on submit.</div>
+        <div class="tool-footer">
+          <span class="tool-status status-live">Live</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+      <a href="c4.html" class="tool-card">
+        <div class="tool-icon">⚡</div>
+        <div class="tool-name">C4 — Content Command</div>
+        <div class="tool-desc">30-day content calendar with tone-aware caption generation. Reads client data directly from the onboarding system.</div>
+        <div class="tool-footer">
+          <span class="tool-status status-live">Live</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+      <a href="post-designer.html" class="tool-card">
+        <div class="tool-icon">🎨</div>
+        <div class="tool-name">Post Designer</div>
+        <div class="tool-desc">Canvas-based graphic builder with 6 layouts. Bold Overlay, Data Drop, Split Half, Big Quote, Before/After, Clean Minimal.</div>
+        <div class="tool-footer">
+          <span class="tool-status status-live">Live</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+      <a href="reporting.html" class="tool-card">
+        <div class="tool-icon">📊</div>
+        <div class="tool-name">Reporting Dashboard</div>
+        <div class="tool-desc">Client metrics, engagement tracking, and PDF report generation. Monthly delivery documentation.</div>
+        <div class="tool-footer">
+          <span class="tool-status status-live">Live</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+      <a href="sop.html" class="tool-card orange">
+        <div class="tool-icon">📋</div>
+        <div class="tool-name">Monthly Delivery SOP</div>
+        <div class="tool-desc">Interactive checklist adapting by client tier. localStorage persistence tracks completion state across sessions.</div>
+        <div class="tool-footer">
+          <span class="tool-status status-live">Live</span>
+          <span class="tool-arrow">→</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="section-label">Client Roster</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:2rem;">
+      <table class="client-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Type</th>
+            <th>Territory</th>
+            <th>Tier</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="clientTableBody">
+          <tr><td colspan="5" style="color:var(--text-dim);font-size:0.75rem;padding:1.2rem 0.8rem;">Loading clients...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
-<!-- STATUS LEGEND -->
-<div class="legend">
-  <div class="legend-label">Status</div>
-  <div class="legend-item"><div class="legend-dot ld-live"></div> Live & Ready</div>
-  <div class="legend-item"><div class="legend-dot ld-soon"></div> Coming Soon</div>
-  <div class="legend-item"><div class="legend-dot ld-build"></div> Next to Build</div>
-  <div class="legend-item"><div class="legend-dot ld-idea"></div> Future Concept</div>
-</div>
+<script>
+const STORAGE_KEY = 'curbloom_clients';
 
-<div class="content">
+function loadClients() {
+  let clients = [];
+  try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) {}
 
-  <!-- ACTIVE CLIENTS STRIP -->
-  <div class="clients-strip">
-    <div class="clients-label">Active Clients</div>
-    <div class="client-pill">
-      <div class="client-dot-live"></div>
-      <span class="client-name-pill">Sara Hoffman</span>
-      <span class="client-status-pill">· Realty One · Webb City/SWMO</span>
-    </div>
-    <div class="client-pill">
-      <div class="client-dot-onboard"></div>
-      <span class="client-name-pill">Emma</span>
-      <span class="client-status-pill">· Lennar Sales Pro · Onboarding</span>
-    </div>
-  </div>
-
-  <!-- NEXT UP BANNER -->
-  <div class="next-banner">
-    <div class="next-icon">🎯</div>
-    <div class="next-text"><strong>Next up:</strong> Close Emma's onboarding → Canva template kit → Pitch deck / one-pager → Renewal & upsell template</div>
-  </div>
-
-  <!-- PHASE 1: SELL -->
-  <div class="phase">
-    <div class="phase-header">
-      <div class="phase-number">PHASE 01</div>
-      <div class="phase-title">Sell — Land the Client</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="cards-grid">
-
-      <a href="Curbloom_Client_Onboarding_Questionnaire.docx" download class="card live">
-        <div class="card-icon">📋</div>
-        <div class="card-title">Onboarding Questionnaire</div>
-        <div class="card-desc">Send before the onboarding call. Captures voice, tone, personal details, market, goals.</div>
-        <div class="card-badge badge-live">● LIVE — Download</div>
-      </a>
-
-      <a href="curbloom_pricing.html" class="card live">
-        <div class="card-icon">💵</div>
-        <div class="card-title">Pricing Sheet</div>
-        <div class="card-desc">Founder / Growth / Premium tiers with territory lock explained. Print to PDF for sales conversations.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <a href="curbloom_service_agreement.html" class="card live">
-        <div class="card-icon">📄</div>
-        <div class="card-title">Service Agreement</div>
-        <div class="card-desc">Fillable one-page agreement. Covers deliverables, exclusivity, payment, and cancellation. Print to PDF and sign.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">🎯</div>
-        <div class="card-title">Pitch Deck / One-Pager</div>
-        <div class="card-desc">One-page visual leave-behind for in-person or cold outreach pitches.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
+  // Sidebar client list
+  const listEl = document.getElementById('clientList');
+  if (clients.length === 0) {
+    listEl.innerHTML = `<div style="font-size:0.75rem;color:var(--text-dim);padding:0.5rem 0;">No clients yet.</div>`;
+  } else {
+    listEl.innerHTML = clients.map((c, i) => `
+      <div class="client-card" onclick="window.location.href='c4.html'">
+        <div class="client-dot"></div>
+        <div class="cname">${c.name}</div>
+        <div class="cmeta">${c.agentType || c.type || 'Realtor'}</div>
+        <div class="ccomm">${c.community} · ${c.market}</div>
       </div>
+    `).join('');
+  }
 
-    </div>
-  </div>
+  // Stats
+  document.getElementById('statClients').textContent = clients.length;
+  document.getElementById('statPosts').textContent = (clients.length * 30) || '—';
+  document.getElementById('statMarkets').textContent = clients.length || '—';
 
-  <!-- PHASE 2: ONBOARD -->
-  <div class="phase">
-    <div class="phase-header">
-      <div class="phase-number">PHASE 02</div>
-      <div class="phase-title">Onboard — Set Up the Client</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="cards-grid">
+  // Client table
+  const tbody = document.getElementById('clientTableBody');
+  if (clients.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-dim);font-size:0.75rem;padding:1.2rem 0.8rem;">No clients onboarded yet. <a href="onboarding.html" style="color:var(--green-light);">Start here →</a></td></tr>`;
+  } else {
+    tbody.innerHTML = clients.map(c => `
+      <tr onclick="window.location.href='c4.html'">
+        <td><strong>${c.name}</strong>${c.brokerage ? `<br><span style="font-size:0.7rem;color:var(--text-dim);">${c.brokerage}</span>` : ''}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted);">${c.agentType || c.type || 'Realtor'}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-muted);">${c.community}<br>${c.market}</td>
+        <td><span style="background:rgba(82,183,136,0.12);border:1px solid var(--green-mid);color:var(--green-light);font-family:'DM Mono',monospace;font-size:0.6rem;padding:2px 8px;border-radius:8px;">Growth</span></td>
+        <td><span style="background:rgba(82,183,136,0.12);border:1px solid var(--green-mid);color:var(--green-light);font-family:'DM Mono',monospace;font-size:0.6rem;padding:2px 8px;border-radius:8px;">Active</span></td>
+      </tr>
+    `).join('');
+  }
+}
 
-      <a href="c4.html" class="card live">
-        <div class="card-icon">⚡</div>
-        <div class="card-title">C4 Content Command Center</div>
-        <div class="card-desc">Generate the full 30-day calendar and captions for any client. Sara Hoffman preloaded.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">📐</div>
-        <div class="card-title">Canva Template Kit</div>
-        <div class="card-desc">Branded post templates for each content type — one set per client, 6 layouts.</div>
-        <div class="card-badge badge-build">◈ NEXT TO BUILD</div>
-      </div>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">📅</div>
-        <div class="card-title">Month 1 Sample Posts</div>
-        <div class="card-desc">First week of fully designed sample posts to show client what to expect.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
-      </div>
-
-      <a href="curbloom_welcome_email.html" class="card live">
-        <div class="card-icon">📬</div>
-        <div class="card-title">Welcome Email Template</div>
-        <div class="card-desc">Branded welcome email with fill-in fields. Sets expectations and kicks off onboarding on day one.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-    </div>
-  </div>
-
-  <!-- PHASE 3: DELIVER -->
-  <div class="phase">
-    <div class="phase-header">
-      <div class="phase-number">PHASE 03</div>
-      <div class="phase-title">Deliver — Monthly Content Production</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="cards-grid">
-
-      <a href="post-designer.html" class="card live">
-        <div class="card-icon">🎨</div>
-        <div class="card-title">Post Designer</div>
-        <div class="card-desc">Canvas-based graphic builder. 6 layouts, brand colors per client, photo upload, PNG export.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <a href="c4.html" class="card live">
-        <div class="card-icon">✍️</div>
-        <div class="card-title">Caption Generator (C4)</div>
-        <div class="card-desc">AI-powered captions for all 30 posts. Tone-matched to each client's voice.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <a href="sop.html" class="card live">
-        <div class="card-icon">🔁</div>
-        <div class="card-title">Monthly Delivery SOP</div>
-        <div class="card-desc">Interactive checklist for every client, every month. Tier-aware — adapts to Founder, Growth, and Premium.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">🎬</div>
-        <div class="card-title">Reel Script Templates</div>
-        <div class="card-desc">Fill-in-the-blank video scripts by content type. Camera-ready and tone-matched.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- PHASE 4: REPORT -->
-  <div class="phase">
-    <div class="phase-header">
-      <div class="phase-number">PHASE 04</div>
-      <div class="phase-title">Report — Retain the Client</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="cards-grid">
-
-      <a href="reporting.html" class="card live">
-        <div class="card-icon">📊</div>
-        <div class="card-title">Client Reporting Dashboard</div>
-        <div class="card-desc">Month-over-month metrics tracking per client. One-click PDF report generation.</div>
-        <div class="card-badge badge-live">● LIVE — Open Tool</div>
-      </a>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">🏅</div>
-        <div class="card-title">Competitive Benchmarking</div>
-        <div class="card-desc">Compare client's growth to market benchmarks. Show the value of staying exclusive.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
-      </div>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">🔄</div>
-        <div class="card-title">Renewal / Upsell Template</div>
-        <div class="card-desc">90-day check-in script and renewal offer email. Designed to lock in another quarter.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- PHASE 5: GROW -->
-  <div class="phase">
-    <div class="phase-header">
-      <div class="phase-number">PHASE 05</div>
-      <div class="phase-title">Grow — Scale the Business</div>
-      <div class="phase-line"></div>
-    </div>
-    <div class="cards-grid">
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">🌐</div>
-        <div class="card-title">Public Landing Page</div>
-        <div class="card-desc">curbloomgroup.com — inbound lead capture for agents discovering Curbloom online.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
-      </div>
-
-      <div class="card coming-soon">
-        <div class="lock-icon">🔒</div>
-        <div class="card-icon">📥</div>
-        <div class="card-title">Lead Magnet PDF</div>
-        <div class="card-desc">30-Day Social Media Playbook for Real Estate Agents — opt-in lead gen asset.</div>
-        <div class="card-badge badge-soon">◐ COMING SOON</div>
-      </div>
-
-      <div class="card concept">
-        <div class="lock-icon">💡</div>
-        <div class="card-icon">🧩</div>
-        <div class="card-title">Self-Service Platform</div>
-        <div class="card-desc">Questionnaire-driven content engine for any small business. Future expansion concept.</div>
-        <div class="card-badge badge-concept">◇ FUTURE CONCEPT</div>
-      </div>
-
-      <div class="card concept">
-        <div class="lock-icon">💡</div>
-        <div class="card-icon">📞</div>
-        <div class="card-title">Phone Sales Model</div>
-        <div class="card-desc">Outbound script + objection handling for scaling beyond personal network.</div>
-        <div class="card-badge badge-concept">◇ FUTURE CONCEPT</div>
-      </div>
-
-    </div>
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-  <div class="footer-brand">CURBLOOM</div>
-  <div class="footer-note">Operator use only · Last updated April 2026</div>
-</div>
-
+loadClients();
+</script>
 </body>
 </html>

@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curbloom — Client Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #1e4d2b;
+  --green-mid: #2d6a4f;
+  --green-light: #52b788;
+  --green-pale: #b7e4c7;
+  --cream: #f0ead6;
+  --cream-dark: #e0d8c0;
+  --orange: #ff914d;
+  --bg: #0b0f0d;
+  --surface: #111714;
+  --surface2: #171e1a;
+  --border: #1e2e24;
+  --border2: #253020;
+  --text: #e8ede9;
+  --text-muted: #7a9080;
+  --text-dim: #3d5244;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1.1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--green-light);
+  letter-spacing: 2px;
+}
+.logo-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+.back-link {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+.back-link:hover { color: var(--green-light); }
+
+/* ── Progress ── */
+.progress-wrap {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+}
+.progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-width: 780px;
+  margin: 0 auto;
+}
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.step-dot.active {
+  border-color: var(--green-light);
+  background: var(--green-light);
+  color: var(--bg);
+  font-weight: 700;
+}
+.step-dot.done {
+  border-color: var(--green-mid);
+  background: var(--green-mid);
+  color: white;
+}
+.step-label {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+.step-item.active .step-label { color: var(--green-light); }
+.step-item.done .step-label { color: var(--green-mid); }
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border2);
+  margin: 0 0.5rem;
+  flex-shrink: 0;
+  max-width: 40px;
+  transition: background 0.3s;
+}
+.step-line.done { background: var(--green-mid); }
+
+/* ── Main layout ── */
+.main {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+/* ── Section header ── */
+.section-header {
+  margin-bottom: 2rem;
+}
+.section-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--green-light);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+.section-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.card-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green-light);
+  margin-bottom: 0.9rem;
+}
+.card-sublabel {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: -0.6rem;
+  margin-bottom: 0.9rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── Form fields ── */
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+.field-full { grid-column: 1 / -1; }
+
+.field label {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  color: var(--text);
+  font-size: 0.83rem;
+  font-family: 'DM Sans', sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(82,183,136,0.1);
+}
+.field textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a9080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+/* ── Chip grids ── */
+.chip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+.chip-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+.chip-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+.chip {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  text-align: center;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  background: var(--bg);
+  line-height: 1.3;
+  user-select: none;
+}
+.chip:hover:not(.selected) {
+  border-color: var(--green-mid);
+  color: var(--green-pale);
+}
+.chip.selected {
+  background: rgba(82,183,136,0.12);
+  border-color: var(--green-light);
+  color: var(--green-light);
+  font-weight: 600;
+}
+.chip.selected-radio {
+  background: rgba(82,183,136,0.12);
+  border-color: var(--green-light);
+  color: var(--green-light);
+  font-weight: 600;
+}
+
+/* ── Navigation ── */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.btn-back {
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.btn-back:hover {
+  border-color: var(--green-mid);
+  color: var(--green-light);
+}
+.btn-next {
+  background: linear-gradient(135deg, var(--green), var(--green-mid));
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-next:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(82,183,136,0.3);
+}
+.btn-submit {
+  background: linear-gradient(135deg, var(--orange), #ff6b1a);
+  border: none;
+  border-radius: 8px;
+  padding: 0.85rem 2.2rem;
+  color: white;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(255,145,77,0.4);
+}
+
+/* ── Success screen ── */
+.success-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 2rem;
+}
+.success-screen.visible { display: flex; }
+.success-icon {
+  width: 72px;
+  height: 72px;
+  background: rgba(82,183,136,0.15);
+  border: 2px solid var(--green-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.success-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+.success-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 2rem;
+}
+.success-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.success-link {
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: none;
+}
+.success-link.primary {
+  background: linear-gradient(135deg, var(--green), var(--green-mid));
+  color: white;
+}
+.success-link.secondary {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text-muted);
+}
+.success-link:hover { transform: translateY(-1px); }
+
+/* ── Required star ── */
+.req { color: var(--green-light); margin-left: 2px; }
+
+/* ── Hint text ── */
+.hint {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  margin-top: 0.35rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.2rem 0;
+}
+
+/* ── Step content ── */
+.step-content { display: none; }
+.step-content.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="logo">Curbloom</div>
+    <div class="logo-sub">Client Onboarding</div>
+  </div>
+  <a href="index.html" class="back-link">← Back to Playbook</a>
+</div>
+
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-steps" id="progressSteps"></div>
+</div>
+
+<div class="main" id="mainContent">
+  <!-- Steps injected by JS -->
+</div>
+
+<div class="main success-screen" id="successScreen">
+  <div class="success-icon">🌱</div>
+  <div class="success-title">Client Added.</div>
+  <div class="success-sub">
+    Their profile is live across all Curbloom tools — C4, Post Designer, and the Reporting Dashboard will all load this client automatically.
+  </div>
+  <div class="success-links">
+    <button class="success-link primary" onclick="goToC4()">Open C4 →</button>
+    <button class="success-link secondary" onclick="addAnother()">Add Another Client</button>
+    <a href="index.html" class="success-link secondary">Back to Playbook</a>
+  </div>
+</div>
+
+<script>
+// ── Shared state ──
+const STORAGE_KEY = 'curbloom_clients';
+let currentStep = 0;
+let formData = {};
+
+// Chip selection helpers
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+function selectRadio(el, groupClass) {
+  document.querySelectorAll('.' + groupClass).forEach(c => c.classList.remove('selected-radio'));
+  el.classList.add('selected-radio');
+}
+function getChips(container) {
+  return [...container.querySelectorAll('.chip.selected')].map(c => c.dataset.value || c.textContent.trim());
+}
+function getRadio(container) {
+  const el = container.querySelector('.chip.selected-radio');
+  return el ? (el.dataset.value || el.textContent.trim()) : '';
+}
+
+// ── Step definitions ──
+const steps = [
+  { label: "Identity" },
+  { label: "Voice" },
+  { label: "Personal" },
+  { label: "Market" },
+  { label: "Goals" },
+];
+
+// ── Render progress ──
+function renderProgress() {
+  const wrap = document.getElementById('progressSteps');
+  wrap.innerHTML = steps.map((s, i) => {
+    const cls = i < currentStep ? 'done' : i === currentStep ? 'active' : '';
+    const lineCls = i < currentStep ? 'done' : '';
+    const dotContent = i < currentStep ? '✓' : (i + 1);
+    return `
+      <div class="step-item ${cls}">
+        <div class="step-dot ${cls}">${dotContent}</div>
+        <span class="step-label">${s.label}</span>
+        ${i < steps.length - 1 ? `<div class="step-line ${lineCls}"></div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// ── Step HTML templates ──
+function stepHTML(idx) {
+  const templates = [stepIdentity, stepVoice, stepPersonal, stepMarket, stepGoals];
+  return templates[idx]();
+}
+
+function stepIdentity() {
+  return `
+    <div class="section-header">
+      <div class="section-number">Step 01 / 05</div>
+      <div class="section-title">Who are we working with?</div>
+      <div class="section-desc">Basic identity info. This is how we'll reference this client across all tools.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Name & Contact</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Full Name <span class="req">*</span></label>
+          <input id="f-name" type="text" placeholder="e.g. Sara Hoffman" />
+        </div>
+        <div class="field">
+          <label>Brokerage / Company</label>
+          <input id="f-brokerage" type="text" placeholder="e.g. Realty One Group Ovation" />
+        </div>
+        <div class="field">
+          <label>Instagram Handle</label>
+          <input id="f-instagram" type="text" placeholder="@handle" />
+        </div>
+        <div class="field">
+          <label>Facebook Page / URL</label>
+          <input id="f-facebook" type="text" placeholder="facebook.com/yourpage" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Market & Territory</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Community / Neighborhood <span class="req">*</span></label>
+          <input id="f-community" type="text" placeholder="e.g. Webb City, Joplin Metro" />
+        </div>
+        <div class="field">
+          <label>City / Market Area <span class="req">*</span></label>
+          <input id="f-market" type="text" placeholder="e.g. SWMO, Joplin, MO" />
+        </div>
+        <div class="field field-full">
+          <label>Agent Type</label>
+          <select id="f-agenttype">
+            <option value="Independent Realtor">Independent Realtor</option>
+            <option value="Lennar Sales Pro">Lennar Sales Pro</option>
+            <option value="New Home Sales Consultant">New Home Sales Consultant</option>
+            <option value="Buyer's Agent">Buyer's Agent</option>
+            <option value="Listing Agent">Listing Agent</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function stepVoice() {
+  return `
+    <div class="section-header">
+      <div class="section-number">Step 02 / 05</div>
+      <div class="section-title">Brand Voice & Tone</div>
+      <div class="section-desc">The more accurately we capture their voice, the better the content will sound. This is the most important section.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Tone — Select All That Apply</div>
+      <div class="chip-grid" id="toneChips">
+        <div class="chip" onclick="toggleChip(this)">Warm & friendly</div>
+        <div class="chip" onclick="toggleChip(this)">Professional</div>
+        <div class="chip" onclick="toggleChip(this)">Direct & bold</div>
+        <div class="chip" onclick="toggleChip(this)">Casual</div>
+        <div class="chip" onclick="toggleChip(this)">Motivational</div>
+        <div class="chip" onclick="toggleChip(this)">Educational</div>
+        <div class="chip" onclick="toggleChip(this)">Humorous</div>
+        <div class="chip" onclick="toggleChip(this)">Community-focused</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Natural Introduction</div>
+      <div class="card-sublabel">Write 2–3 sentences the way they'd introduce themselves at a community event — not a pitch, just how they talk.</div>
+      <div class="field">
+        <textarea id="f-intro" placeholder="e.g. Hey I'm Sara — I help families find the right home in the Joplin area. I'm big on being real with people and making the whole process feel less overwhelming."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Language Patterns</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Phrases they always use</label>
+          <textarea id="f-phrases-use" placeholder="e.g. 'let's make it happen', 'no pressure', 'here's the deal'"></textarea>
+        </div>
+        <div class="field">
+          <label>How they never want to sound</label>
+          <textarea id="f-phrases-never" placeholder="e.g. Salesy, pushy, corporate, fake-hype"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Personality Reference</div>
+      <div class="card-sublabel">If their social had a personality — what celebrity, public figure, or archetype would it sound like?</div>
+      <div class="field">
+        <input id="f-personalityref" type="text" placeholder="e.g. 'Gary Vee but calmer' or 'like a knowledgeable friend, not a salesperson'" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Humor Preference</div>
+      <div class="chip-grid-2" id="humorChips">
+        <div class="chip" onclick="selectRadio(this, 'humor-chip')" data-value="Love it — bring the personality">Love it — bring the personality</div>
+        <div class="chip" onclick="selectRadio(this, 'humor-chip')" data-value="Occasional light humor is fine">Occasional light humor is fine</div>
+        <div class="chip" onclick="selectRadio(this, 'humor-chip')" data-value="Keep it mostly professional">Keep it mostly professional</div>
+        <div class="chip" onclick="selectRadio(this, 'humor-chip')" data-value="No humor — strictly business">No humor — strictly business</div>
+      </div>
+    </div>
+  `;
+}
+
+function stepPersonal() {
+  return `
+    <div class="section-header">
+      <div class="section-number">Step 03 / 05</div>
+      <div class="section-title">Life & Personal Brand</div>
+      <div class="section-desc">This is what makes content impossible to copy. The more specific, the better.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Life Outside Work</div>
+      <div class="card-sublabel">Family, hobbies, passions, routines — anything they're comfortable sharing publicly. Specifics beat generalities every time.</div>
+      <div class="field">
+        <textarea id="f-personal" style="min-height:100px;" placeholder="e.g. Coaches her daughter's soccer team on Saturdays, meal preps every Sunday, avid reader, very family-oriented, grew up in the area..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Recent Win / Current Highlight</div>
+      <div class="field">
+        <input id="f-win" type="text" placeholder="e.g. Closed 8 homes last quarter, just hit top 10% in the region, new listing phase opening..." />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Typical Workday or Week</div>
+      <div class="card-sublabel">Walk through what their week actually looks like — this powers the Personality/Trust content type.</div>
+      <div class="field">
+        <textarea id="f-workday" placeholder="e.g. Monday mornings are admin, then client calls. Wednesday-Friday mostly showings. Always available by text..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Privacy Boundaries</div>
+      <div class="card-sublabel">Anything about their personal life they want kept off social entirely. We'll never post anything outside these bounds.</div>
+      <div class="field">
+        <input id="f-privacy" type="text" placeholder="e.g. Kids' names/photos, relationship status, health info..." />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Camera Comfort</div>
+      <div class="chip-grid-2" id="cameraChips">
+        <div class="chip" onclick="selectRadio(this, 'cam-chip')" data-value="Very comfortable — love video">Very comfortable — love video</div>
+        <div class="chip" onclick="selectRadio(this, 'cam-chip')" data-value="Okay with it if scripted">Okay if scripted</div>
+        <div class="chip" onclick="selectRadio(this, 'cam-chip')" data-value="Prefer photos over video">Prefer photos over video</div>
+        <div class="chip" onclick="selectRadio(this, 'cam-chip')" data-value="Camera shy — minimal video please">Camera shy — minimal video</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Personal Content OK?</div>
+      <div class="chip-grid-3" id="personalContentChips">
+        <div class="chip" onclick="selectRadio(this, 'pc-chip')" data-value="Yes — personal content is fine">Yes — personal content is fine</div>
+        <div class="chip" onclick="selectRadio(this, 'pc-chip')" data-value="Some personal, mostly professional">Some personal, mostly professional</div>
+        <div class="chip" onclick="selectRadio(this, 'pc-chip')" data-value="Strictly professional only">Strictly professional only</div>
+      </div>
+    </div>
+  `;
+}
+
+function stepMarket() {
+  return `
+    <div class="section-header">
+      <div class="section-number">Step 04 / 05</div>
+      <div class="section-title">Market & Community</div>
+      <div class="section-desc">Deep market knowledge is what separates genuinely useful content from generic filler.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Ideal Buyer</div>
+      <div class="card-sublabel">Who do they love working with most? Be specific — this targets the content.</div>
+      <div class="field">
+        <input id="f-idealbuyer" type="text" placeholder="e.g. Move-up buyers with young families looking for good schools and space" />
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Top Reasons Buyers Choose Their Community</div>
+      <div class="card-sublabel">The 3 best selling points — what makes their market win over alternatives?</div>
+      <div class="field">
+        <textarea id="f-reasons" placeholder="e.g. 1. School district is top-rated in the region&#10;2. Newer construction with modern layouts at competitive prices&#10;3. 10 min from downtown with a small-town feel"></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Common Buyer Objections</div>
+      <div class="card-sublabel">What concerns or hesitations come up most before buyers commit?</div>
+      <div class="field">
+        <textarea id="f-objections" placeholder="e.g. Interest rates, not sure if it's the right time, worried about selling their current home first..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Local Knowledge & Hidden Gems</div>
+      <div class="card-sublabel">Schools, restaurants, neighborhood character, growth plans — the insider stuff most people don't know.</div>
+      <div class="field">
+        <textarea id="f-localknowledge" placeholder="e.g. New Whole Foods opening in 2025, best hidden taco spot is El Pueblito, district is expanding STEM programs..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Brand Colors & Visual Identity</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Primary color (hex or description)</label>
+          <input id="f-color1" type="text" placeholder="e.g. #1a2744 or navy blue" />
+        </div>
+        <div class="field">
+          <label>Accent color</label>
+          <input id="f-color2" type="text" placeholder="e.g. #c9a227 or gold" />
+        </div>
+        <div class="field field-full">
+          <label>Content accounts they admire</label>
+          <input id="f-admired" type="text" placeholder="e.g. @tomferry, @thesellercommunity — like how they educate without being preachy" />
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function stepGoals() {
+  return `
+    <div class="section-header">
+      <div class="section-number">Step 05 / 05</div>
+      <div class="section-title">Goals & Definition of Success</div>
+      <div class="section-desc">What does winning look like for this client? This shapes the content strategy from day one.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Primary Social Media Goal</div>
+      <div class="chip-grid-2" id="goalChips">
+        <div class="chip" onclick="toggleChip(this)" data-value="Generate buyer leads">Generate buyer leads</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="Build name recognition">Build name recognition</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="Stay top of mind with past clients">Stay top of mind with past clients</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="Attract referral partners">Attract referral partners</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Transaction Volume</div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Current — homes / month</label>
+          <input id="f-txcurrent" type="text" placeholder="e.g. 2–3" />
+        </div>
+        <div class="field">
+          <label>Goal in 12 months</label>
+          <input id="f-txgoal" type="text" placeholder="e.g. 5–7" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Where They Currently Get Business</div>
+      <div class="chip-grid-2" id="bizSourceChips">
+        <div class="chip" onclick="toggleChip(this)" data-value="Referrals / word of mouth">Referrals / word of mouth</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="Walk-ins / signage">Walk-ins / signage</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="Social media already">Social media already</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="Company leads / floor time">Company leads / floor time</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Definition of Success at 90 Days</div>
+      <div class="card-sublabel">What would make them feel like Curbloom was 100% worth it? Be specific — this becomes the benchmark.</div>
+      <div class="field">
+        <textarea id="f-success" placeholder="e.g. 3+ inbound DMs per week from buyers, people recognizing me at open houses, consistent posting without spending my weekends on it..."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Anything Else?</div>
+      <div class="field">
+        <textarea id="f-notes" placeholder="Anything you want us to know before we build their content strategy..."></textarea>
+      </div>
+    </div>
+  `;
+}
+
+// ── Collect step data ──
+function collectStep(idx) {
+  if (idx === 0) {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { alert('Full name is required.'); return false; }
+    const community = document.getElementById('f-community').value.trim();
+    if (!community) { alert('Community / neighborhood is required.'); return false; }
+    const market = document.getElementById('f-market').value.trim();
+    if (!market) { alert('City / market area is required.'); return false; }
+    formData.name = name;
+    formData.brokerage = document.getElementById('f-brokerage').value.trim();
+    formData.instagram = document.getElementById('f-instagram').value.trim();
+    formData.facebook = document.getElementById('f-facebook').value.trim();
+    formData.community = community;
+    formData.market = market;
+    formData.agentType = document.getElementById('f-agenttype').value;
+  }
+  if (idx === 1) {
+    formData.tones = getChips(document.getElementById('toneChips'));
+    formData.intro = document.getElementById('f-intro').value.trim();
+    formData.phrasesUse = document.getElementById('f-phrases-use').value.trim();
+    formData.phrasesNever = document.getElementById('f-phrases-never').value.trim();
+    formData.personalityRef = document.getElementById('f-personalityref').value.trim();
+    formData.humorLevel = getRadio(document.getElementById('humorChips'));
+  }
+  if (idx === 2) {
+    formData.personal = document.getElementById('f-personal').value.trim();
+    formData.recentWin = document.getElementById('f-win').value.trim();
+    formData.workday = document.getElementById('f-workday').value.trim();
+    formData.privacy = document.getElementById('f-privacy').value.trim();
+    formData.cameraComfort = getRadio(document.getElementById('cameraChips'));
+    formData.personalContentOk = getRadio(document.getElementById('personalContentChips'));
+  }
+  if (idx === 3) {
+    formData.idealBuyer = document.getElementById('f-idealbuyer').value.trim();
+    formData.topReasons = document.getElementById('f-reasons').value.trim();
+    formData.objections = document.getElementById('f-objections').value.trim();
+    formData.localKnowledge = document.getElementById('f-localknowledge').value.trim();
+    formData.brandColor1 = document.getElementById('f-color1').value.trim();
+    formData.brandColor2 = document.getElementById('f-color2').value.trim();
+    formData.admiredAccounts = document.getElementById('f-admired').value.trim();
+  }
+  if (idx === 4) {
+    formData.goals = getChips(document.getElementById('goalChips'));
+    formData.txCurrent = document.getElementById('f-txcurrent').value.trim();
+    formData.txGoal = document.getElementById('f-txgoal').value.trim();
+    formData.bizSources = getChips(document.getElementById('bizSourceChips'));
+    formData.successDefinition = document.getElementById('f-success').value.trim();
+    formData.notes = document.getElementById('f-notes').value.trim();
+  }
+  return true;
+}
+
+// ── Render current step ──
+function renderStep() {
+  renderProgress();
+  const main = document.getElementById('mainContent');
+  main.innerHTML = `
+    <div class="step-content active">
+      ${stepHTML(currentStep)}
+      <div class="nav-bar">
+        ${currentStep > 0
+          ? `<button class="btn-back" onclick="prevStep()">← Back</button>`
+          : `<div></div>`}
+        ${currentStep < steps.length - 1
+          ? `<button class="btn-next" onclick="nextStep()">Continue <span>→</span></button>`
+          : `<button class="btn-submit" onclick="submitForm()">✦ Add to Curbloom</button>`}
+      </div>
+    </div>
+  `;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function nextStep() {
+  if (!collectStep(currentStep)) return;
+  currentStep++;
+  renderStep();
+}
+
+function prevStep() {
+  currentStep--;
+  renderStep();
+}
+
+// ── Submit ──
+function submitForm() {
+  if (!collectStep(4)) return;
+
+  formData.id = 'client_' + Date.now();
+  formData.createdAt = new Date().toISOString();
+
+  // Load existing clients
+  let clients = [];
+  try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) {}
+  clients.push(formData);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+
+  // Show success
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('successScreen').classList.add('visible');
+}
+
+function goToC4() {
+  window.location.href = 'c4.html';
+}
+
+function addAnother() {
+  currentStep = 0;
+  formData = {};
+  document.getElementById('mainContent').style.display = 'block';
+  document.getElementById('progressWrap').style.display = 'block';
+  document.getElementById('successScreen').classList.remove('visible');
+  renderStep();
+}
+
+// ── Preload Sara as the baseline demo client if no clients exist ──
+function ensureBaselineClient() {
+  let clients = [];
+  try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) {}
+  if (clients.length === 0) {
+    const sara = {
+      id: 'client_sara_baseline',
+      createdAt: new Date().toISOString(),
+      name: "Sara Hoffman",
+      brokerage: "Realty One Group Ovation",
+      instagram: "@sarahoffmanrealty",
+      facebook: "",
+      community: "Webb City / Joplin Metro",
+      market: "SWMO",
+      agentType: "Independent Realtor",
+      tones: ["Warm & friendly", "Professional", "Community-focused"],
+      intro: "Hi, I'm Sara — I help families find the right home in the Joplin area. I believe the process should feel exciting, not overwhelming, and I'm here to make that happen.",
+      phrasesUse: "'Let's find the right fit', 'No pressure — let's just talk', 'Here's what I'd do'",
+      phrasesNever: "Pushy, salesy, corporate-speak, fake urgency",
+      personalityRef: "Knowledgeable friend who happens to be an expert",
+      humorLevel: "Occasional light humor is fine",
+      personal: "Mom, community-oriented, loves the Joplin area, strong local roots",
+      recentWin: "Active listings in Webb City and surrounding SWMO communities",
+      workday: "Morning client calls, afternoon showings, evenings for follow-up",
+      privacy: "",
+      cameraComfort: "Okay with it if scripted",
+      personalContentOk: "Some personal, mostly professional",
+      idealBuyer: "Families looking for their forever home in the Joplin Metro area",
+      topReasons: "Strong schools, community feel, affordable compared to larger metros",
+      objections: "Timing concerns, interest rates, not sure about the area",
+      localKnowledge: "Deep Joplin Metro and SWMO knowledge — schools, neighborhoods, growth areas",
+      brandColor1: "#1a2744",
+      brandColor2: "#c9a227",
+      admiredAccounts: "",
+      goals: ["Generate buyer leads", "Build name recognition"],
+      txCurrent: "3–5",
+      txGoal: "8–10",
+      bizSources: ["Referrals / word of mouth"],
+      successDefinition: "Consistent leads from social, strong local recognition in SWMO",
+      notes: "Growth tier client. Exclusive territory: Webb City / Joplin Metro SWMO."
+    };
+    clients.push(sara);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+  }
+}
+
+// ── Boot ──
+ensureBaselineClient();
+renderStep();
+</script>
+</body>
+</html>

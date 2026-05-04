@@ -4,44 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Curbloom — Client Reporting</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #0b0f14; color: #e8e8e8; min-height: 100vh; }
-
-  .topnav { background: #0f1419; border-bottom: 1px solid #1a2535; padding: 0.6rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; }
-  .nav-logo { font-size: 1rem; font-weight: 800; color: #52b788; letter-spacing: 3px; margin-right: auto; text-decoration: none; }
-  .nav-link { font-size: 0.72rem; color: #555; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; padding: 0.3rem 0.6rem; border-radius: 5px; }
-  .nav-link:hover { color: #74c69d; }
-  .nav-link.active { color: #52b788; background: #1a2e22; }
 
   .header { background: #111620; border-bottom: 2px solid #2d6a4f; padding: 0.85rem 1.8rem; display: flex; align-items: center; justify-content: space-between; }
   .logo { font-size: 1.35rem; font-weight: 800; color: #52b788; letter-spacing: 3px; }
   .logo span { color: #b7e4c7; font-size: 0.6rem; display: block; letter-spacing: 2px; font-weight: 500; margin-top: -1px; }
   .header-badge { background: #1a2e22; border: 1px solid #2d6a4f; border-radius: 20px; padding: 4px 14px; font-size: 0.65rem; color: #52b788; letter-spacing: 1px; }
+  .back-link { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: #7a9080; text-decoration: none; padding: 4px 10px; border: 1px solid #1e2e24; border-radius: 5px; transition: all 0.15s; }
+  .back-link:hover { color: #52b788; border-color: #2d6a4f; }
 
-  .app { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 105px); }
+  .app { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 64px); }
 
   .sidebar { background: #0d1118; border-right: 1px solid #1a2030; display: flex; flex-direction: column; }
   .sidebar-top { padding: 1.1rem; flex: 1; overflow-y: auto; }
-  .sidebar-label { font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: #52b788; margin-bottom: 0.7rem; font-weight: 700; }
+  .sidebar-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 2.5px; text-transform: uppercase; color: #52b788; margin-bottom: 0.7rem; }
   .client-card { background: #161d2a; border: 1px solid #1e2838; border-radius: 9px; padding: 0.8rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.18s; position: relative; overflow: hidden; }
   .client-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; transition: background 0.18s; }
   .client-card:hover::before, .client-card.active::before { background: #52b788; }
   .client-card.active { border-color: #2d6a4f; background: #132010; }
   .client-name { font-weight: 700; font-size: 0.85rem; }
-  .client-sub { font-size: 0.65rem; color: #52b788; margin-top: 2px; }
-  .add-btn { margin: 0 1.1rem 1.1rem; background: transparent; border: 1px dashed #2d6a4f; border-radius: 8px; padding: 0.65rem; color: #52b788; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; width: calc(100% - 2.2rem); font-family: inherit; }
+  .client-sub { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: #52b788; margin-top: 2px; }
+
+  .no-clients-notice { margin: 0.5rem; background: rgba(255,145,77,0.08); border: 1px solid rgba(255,145,77,0.2); border-radius: 8px; padding: 0.85rem; font-size: 0.72rem; color: #f4a261; line-height: 1.6; }
+  .no-clients-notice a { color: #ff914d; font-weight: 600; text-decoration: underline; }
+
+  .sidebar-actions { padding: 1rem 1.1rem; border-top: 1px solid #1a2030; display: flex; flex-direction: column; gap: 0.5rem; }
+  .add-btn { background: transparent; border: 1px dashed #2d6a4f; border-radius: 8px; padding: 0.65rem; color: #52b788; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
   .add-btn:hover { background: #132010; }
+  .back-sidebar { background: transparent; border: 1px solid #1e2838; border-radius: 8px; padding: 0.55rem; color: #7a9080; font-size: 0.72rem; cursor: pointer; text-align: center; text-decoration: none; display: block; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .back-sidebar:hover { border-color: #2d6a4f; color: #52b788; }
 
   .main { padding: 1.4rem 1.8rem; overflow-y: auto; }
 
-  .section-divider { font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #52b788; margin: 1.2rem 0 0.8rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  .section-divider { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: #52b788; margin: 1.2rem 0 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
   .section-divider::after { content: ''; flex: 1; height: 1px; background: #1a2030; }
 
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.4rem; }
   .stat-card { background: #111620; border: 1px solid #1e2838; border-radius: 10px; padding: 1rem 1.1rem; }
-  .stat-label { font-size: 0.62rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.35rem; }
+  .stat-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.35rem; }
   .stat-val { font-size: 1.6rem; font-weight: 800; color: #52b788; }
   .stat-change { font-size: 0.7rem; margin-top: 3px; }
   .change-up { color: #52b788; }
@@ -50,7 +53,7 @@
 
   .data-entry { background: #111620; border: 1px solid #1e2838; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem; }
   .data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 0.75rem; }
-  .data-field label { display: block; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; color: #74c69d; margin-bottom: 0.3rem; }
+  .data-field label { display: block; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase; color: #74c69d; margin-bottom: 0.3rem; }
   .data-field input { width: 100%; background: #161d2a; border: 1px solid #1e2838; border-radius: 7px; padding: 0.5rem 0.7rem; color: #e8e8e8; font-size: 0.82rem; font-family: inherit; outline: none; transition: border-color 0.2s; }
   .data-field input:focus { border-color: #52b788; }
   .save-btn { background: linear-gradient(135deg, #2d6a4f, #52b788); border: none; border-radius: 8px; padding: 0.55rem 1.5rem; color: white; font-weight: 700; font-size: 0.8rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
@@ -77,8 +80,9 @@
   .report-btn { background: linear-gradient(135deg, #1a3050, #2a4a80); border: 1px solid #2a4a80; border-radius: 8px; padding: 0.65rem 1.8rem; color: #90b8f8; font-weight: 700; font-size: 0.82rem; cursor: pointer; font-family: inherit; transition: all 0.2s; }
   .report-btn:hover { background: linear-gradient(135deg, #2a4a80, #3a5a90); box-shadow: 0 3px 15px rgba(90,140,200,0.2); }
 
-  .no-client { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 65vh; gap: 0.9rem; text-align: center; color: #333; }
+  .no-client { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 65vh; gap: 0.9rem; text-align: center; }
   .no-client p { font-size: 0.8rem; max-width: 260px; line-height: 1.65; color: #444; }
+  .no-client a { color: #52b788; font-size: 0.82rem; }
 
   /* PDF OVERLAY */
   .pdf-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 2rem; overflow-y: auto; }
@@ -106,28 +110,28 @@
 </head>
 <body>
 
-<nav class="topnav">
-  <a class="nav-logo" href="index.html">CURBLOOM</a>
-  <a class="nav-link" href="c4.html">C4</a>
-  <a class="nav-link active" href="reporting.html">Reporting</a>
-  <a class="nav-link" href="post-designer.html">Post Designer</a>
-</nav>
-
 <div class="header">
   <div>
     <div class="logo">REPORTING <span>CLIENT METRICS DASHBOARD</span></div>
   </div>
-  <div class="header-badge">Exclusive Territory Model</div>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <div class="header-badge">Exclusive Territory Model</div>
+    <a href="index.html" class="back-link">← Playbook</a>
+  </div>
 </div>
 
 <div class="app">
   <div class="sidebar">
     <div class="sidebar-top">
-      <div class="sidebar-label">Your Clients</div>
+      <div class="sidebar-label">Clients</div>
       <div id="clientList"></div>
     </div>
-    <button class="add-btn" onclick="addClientPrompt()">+ Add Client</button>
+    <div class="sidebar-actions">
+      <button class="add-btn" onclick="window.location.href='onboarding.html'">+ Onboard New Client</button>
+      <a href="index.html" class="back-sidebar">← The Playbook</a>
+    </div>
   </div>
+
   <div class="main" id="mainArea">
     <div class="no-client">
       <div style="font-size:2.5rem;">📊</div>
@@ -142,35 +146,54 @@
 </div>
 
 <script>
+const STORAGE_KEY = 'curbloom_clients';
+const REPORT_DATA_KEY = 'curbloom_report_data'; // separate store for metrics
+
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-let clients = [
-  { name: "Blake Mason", market: "Coweta, OK · The Woods", agentType: "Lennar Sales Pro", data: {}, topPosts: {}, notes: {} },
-  { name: "Sara Hoffman", market: "SWMO / Joplin Metro", agentType: "Independent Realtor", data: {}, topPosts: {}, notes: {} }
-];
-let activeIdx = 0;
+
+let clients = [];
+let activeIdx = null;
 let activeMonth = `${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`;
 
-function renderSidebar() {
-  document.getElementById('clientList').innerHTML = clients.map((c,i) => `
-    <div class="client-card ${i===activeIdx?'active':''}" onclick="selectClient(${i})">
+// Metrics data stored separately so it persists independently
+let reportData = {};
+try { reportData = JSON.parse(localStorage.getItem(REPORT_DATA_KEY) || '{}'); } catch(e) {}
+
+function saveReportData() {
+  localStorage.setItem(REPORT_DATA_KEY, JSON.stringify(reportData));
+}
+
+function getClientKey(idx) {
+  return clients[idx]?.id || clients[idx]?.name || `client_${idx}`;
+}
+
+function loadClients() {
+  try { clients = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e) {}
+
+  const list = document.getElementById('clientList');
+  if (clients.length === 0) {
+    list.innerHTML = `<div class="no-clients-notice">No clients onboarded yet.<br><a href="onboarding.html">Start onboarding →</a></div>`;
+    return;
+  }
+
+  list.innerHTML = clients.map((c, i) => `
+    <div class="client-card ${i === activeIdx ? 'active' : ''}" onclick="selectClient(${i})">
       <div class="client-name">${c.name}</div>
-      <div class="client-sub">${c.market}</div>
-    </div>`).join('');
+      <div class="client-sub">${c.community} · ${c.market}</div>
+    </div>
+  `).join('');
+
+  if (activeIdx === null && clients.length > 0) {
+    activeIdx = 0;
+    renderMain();
+    // Re-render sidebar with active state
+    loadClients();
+  }
 }
 
 function selectClient(idx) {
   activeIdx = idx;
-  renderSidebar();
-  renderMain();
-}
-
-function addClientPrompt() {
-  const name = prompt('Client full name:');
-  if (!name) return;
-  const market = prompt('Market / Community:') || '';
-  clients.push({ name, market, agentType: 'Realtor', data: {}, topPosts: {}, notes: {} });
-  activeIdx = clients.length - 1;
-  renderSidebar();
+  loadClients();
   renderMain();
 }
 
@@ -185,13 +208,16 @@ function getMonthList() {
 }
 
 function renderMain() {
+  if (activeIdx === null || clients.length === 0) return;
   const c = clients[activeIdx];
+  const ck = getClientKey(activeIdx);
   const months = getMonthList();
   if (!months.includes(activeMonth)) activeMonth = months[months.length - 1];
 
-  const cur = c.data[activeMonth] || {};
+  if (!reportData[ck]) reportData[ck] = {};
+  const cur = reportData[ck][activeMonth] || {};
   const prevIdx = months.indexOf(activeMonth) - 1;
-  const prev = prevIdx >= 0 ? (c.data[months[prevIdx]] || {}) : {};
+  const prev = prevIdx >= 0 ? (reportData[ck][months[prevIdx]] || {}) : {};
 
   function change(key) {
     const cv = parseInt(cur[key]) || 0;
@@ -201,14 +227,14 @@ function renderMain() {
     return pct >= 0 ? `<span class="change-up">▲ ${pct}% vs last month</span>` : `<span class="change-down">▼ ${Math.abs(pct)}% vs last month</span>`;
   }
 
-  const topPosts = c.topPosts[activeMonth] || [];
-  const notes = c.notes[activeMonth] || '';
+  const topPosts = reportData[ck].topPosts?.[activeMonth] || [];
+  const notes = reportData[ck].notes?.[activeMonth] || '';
 
   document.getElementById('mainArea').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
       <div>
         <div style="font-size:1.1rem;font-weight:800;">${c.name}</div>
-        <div style="font-size:0.72rem;color:#52b788;margin-top:2px;">${c.market} · ${c.agentType}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:#52b788;margin-top:2px;">${c.community} · ${c.market} · ${c.agentType || 'Realtor'}</div>
       </div>
       <button class="report-btn" onclick="generateReport()">📄 Generate Client Report</button>
     </div>
@@ -239,7 +265,7 @@ function renderMain() {
 
     <div class="section-divider">Top Performing Posts</div>
     <div class="top-posts">
-      ${topPosts.length ? topPosts.map((p,i)=>`<div class="post-row"><span class="post-name">${p.name}</span><span class="post-eng">${p.eng} engagements</span></div>`).join('') : '<div style="font-size:0.78rem;color:#444;padding:0.5rem 0;">No top posts recorded yet for this month.</div>'}
+      ${topPosts.length ? topPosts.map(p=>`<div class="post-row"><span class="post-name">${p.name}</span><span class="post-eng">${p.eng} engagements</span></div>`).join('') : '<div style="font-size:0.78rem;color:#444;padding:0.5rem 0;">No top posts recorded yet for this month.</div>'}
       <div class="post-add">
         <input id="p-name" placeholder="Post title or hook..." />
         <input id="p-eng" type="number" placeholder="Total engagements" style="width:160px;" />
@@ -249,9 +275,10 @@ function renderMain() {
 
     <div class="section-divider">Strategy Notes (for client report)</div>
     <div style="margin-bottom:1.2rem;">
-      <textarea class="notes-area" id="d-notes" placeholder="e.g. Personality posts outperformed educational this month. Recommend increasing Reel frequency in ${activeMonth.split(' ')[0]}...">${notes}</textarea>
+      <textarea class="notes-area" id="d-notes" placeholder="e.g. Personality posts outperformed educational this month. Recommend increasing Reel frequency next month...">${notes}</textarea>
       <div style="margin-top:0.5rem;"><button class="save-btn" onclick="saveNotes()">Save Notes</button></div>
-    </div>`;
+    </div>
+  `;
 }
 
 function switchMonth(m) {
@@ -260,8 +287,9 @@ function switchMonth(m) {
 }
 
 function saveData() {
-  const c = clients[activeIdx];
-  c.data[activeMonth] = {
+  const ck = getClientKey(activeIdx);
+  if (!reportData[ck]) reportData[ck] = {};
+  reportData[ck][activeMonth] = {
     followers: document.getElementById('d-followers').value,
     likes: document.getElementById('d-likes').value,
     comments: document.getElementById('d-comments').value,
@@ -271,13 +299,18 @@ function saveData() {
     posts: document.getElementById('d-posts').value,
     stories: document.getElementById('d-stories').value,
   };
+  saveReportData();
   const btn = event.target;
   btn.textContent = '✅ Saved!';
   setTimeout(() => { btn.textContent = 'Save Metrics'; renderMain(); }, 1200);
 }
 
 function saveNotes() {
-  clients[activeIdx].notes[activeMonth] = document.getElementById('d-notes').value;
+  const ck = getClientKey(activeIdx);
+  if (!reportData[ck]) reportData[ck] = {};
+  if (!reportData[ck].notes) reportData[ck].notes = {};
+  reportData[ck].notes[activeMonth] = document.getElementById('d-notes').value;
+  saveReportData();
   const btn = event.target;
   btn.textContent = '✅ Saved!';
   setTimeout(() => { btn.textContent = 'Save Notes'; }, 1200);
@@ -287,19 +320,24 @@ function addTopPost() {
   const name = document.getElementById('p-name').value.trim();
   const eng = document.getElementById('p-eng').value;
   if (!name) return;
-  if (!clients[activeIdx].topPosts[activeMonth]) clients[activeIdx].topPosts[activeMonth] = [];
-  clients[activeIdx].topPosts[activeMonth].push({ name, eng: eng || '—' });
+  const ck = getClientKey(activeIdx);
+  if (!reportData[ck]) reportData[ck] = {};
+  if (!reportData[ck].topPosts) reportData[ck].topPosts = {};
+  if (!reportData[ck].topPosts[activeMonth]) reportData[ck].topPosts[activeMonth] = [];
+  reportData[ck].topPosts[activeMonth].push({ name, eng: eng || '—' });
+  saveReportData();
   renderMain();
 }
 
 function generateReport() {
   const c = clients[activeIdx];
+  const ck = getClientKey(activeIdx);
   const months = getMonthList();
-  const cur = c.data[activeMonth] || {};
+  const cur = reportData[ck]?.[activeMonth] || {};
   const prevIdx = months.indexOf(activeMonth) - 1;
-  const prev = prevIdx >= 0 ? (c.data[months[prevIdx]] || {}) : {};
-  const topPosts = c.topPosts[activeMonth] || [];
-  const notes = c.notes[activeMonth] || 'No strategy notes added for this month.';
+  const prev = prevIdx >= 0 ? (reportData[ck]?.[months[prevIdx]] || {}) : {};
+  const topPosts = reportData[ck]?.topPosts?.[activeMonth] || [];
+  const notes = reportData[ck]?.notes?.[activeMonth] || 'No strategy notes added for this month.';
 
   function fmtChange(key) {
     const cv = parseInt(cur[key]) || 0;
@@ -320,11 +358,11 @@ function generateReport() {
       <div class="pdf-meta">
         <div class="pdf-client">${c.name}</div>
         <div class="pdf-period">${activeMonth} Performance Report</div>
-        <div style="margin-top:4px;">${c.market}</div>
+        <div style="margin-top:4px;">${c.community} · ${c.market}</div>
       </div>
     </div>
 
-    <div class="pdf-excl">🔒 <strong>Exclusive Territory:</strong> ${c.market} is locked to ${c.name}. No other agent receives Curbloom services in this market.</div>
+    <div class="pdf-excl">🔒 <strong>Exclusive Territory:</strong> ${c.community}, ${c.market} is locked to ${c.name}. No other agent receives Curbloom services in this market.</div>
 
     <div class="pdf-section-title">Key Metrics — ${activeMonth}</div>
     <div class="pdf-metrics">
@@ -352,7 +390,8 @@ function generateReport() {
     <div class="pdf-section-title">Strategy &amp; Next Steps</div>
     <div class="pdf-notes">${notes}</div>
 
-    <div class="pdf-footer">Curbloom · Social Media Marketing · Real Estate &amp; New Home Sales<br>This report is confidential and prepared exclusively for ${c.name}. Generated ${new Date().toLocaleDateString()}.</div>`;
+    <div class="pdf-footer">Curbloom · Social Media Marketing · Real Estate &amp; New Home Sales<br>This report is confidential and prepared exclusively for ${c.name}. Generated ${new Date().toLocaleDateString()}.</div>
+  `;
 
   document.getElementById('pdfOverlay').classList.add('show');
 }
@@ -361,8 +400,8 @@ function closePDF() {
   document.getElementById('pdfOverlay').classList.remove('show');
 }
 
-renderSidebar();
-renderMain();
+// ── Boot ──
+loadClients();
 </script>
 </body>
 </html>
